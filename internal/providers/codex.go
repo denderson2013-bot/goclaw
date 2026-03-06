@@ -50,21 +50,8 @@ func (p *CodexProvider) DefaultModel() string  { return p.defaultModel }
 func (p *CodexProvider) SupportsThinking() bool { return true }
 
 func (p *CodexProvider) Chat(ctx context.Context, req ChatRequest) (*ChatResponse, error) {
-	body := p.buildRequestBody(req, false)
-
-	return RetryDo(ctx, p.retryConfig, func() (*ChatResponse, error) {
-		respBody, err := p.doRequest(ctx, body)
-		if err != nil {
-			return nil, err
-		}
-		defer respBody.Close()
-
-		var resp responsesAPIResponse
-		if err := json.NewDecoder(respBody).Decode(&resp); err != nil {
-			return nil, fmt.Errorf("%s: decode response: %w", p.name, err)
-		}
-		return p.parseResponse(&resp), nil
-	})
+	// Codex Responses API requires stream=true; delegate to ChatStream with no chunk handler.
+	return p.ChatStream(ctx, req, nil)
 }
 
 func (p *CodexProvider) ChatStream(ctx context.Context, req ChatRequest, onChunk func(StreamChunk)) (*ChatResponse, error) {
@@ -242,9 +229,14 @@ func (p *CodexProvider) buildRequestBody(req ChatRequest, stream bool) map[strin
 			if len(m.ToolCalls) > 0 {
 				for _, tc := range m.ToolCalls {
 					argsJSON, _ := json.Marshal(tc.Arguments)
+					// Responses API requires "id" to start with "fc_"; call_id is the tool call ID.
+					itemID := tc.ID
+					if !strings.HasPrefix(itemID, "fc") {
+						itemID = "fc_" + tc.ID
+					}
 					input = append(input, map[string]interface{}{
 						"type":      "function_call",
-						"id":        tc.ID,
+						"id":        itemID,
 						"call_id":   tc.ID,
 						"name":      tc.Name,
 						"arguments": string(argsJSON),
@@ -280,9 +272,10 @@ func (p *CodexProvider) buildRequestBody(req ChatRequest, stream bool) map[strin
 		"store":  false,
 	}
 
-	if instructions != "" {
-		body["instructions"] = instructions
+	if instructions == "" {
+		instructions = "You are a helpful assistant."
 	}
+	body["instructions"] = instructions
 
 	// Convert tools to Responses API format (internally tagged)
 	if len(req.Tools) > 0 {

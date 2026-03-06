@@ -143,9 +143,17 @@ func (c *Config) applyEnvOverrides() {
 		c.Channels.WhatsApp.Enabled = true
 	}
 
-	// Allow overriding default provider/model
-	envStr("GOCLAW_PROVIDER", &c.Agents.Defaults.Provider)
-	envStr("GOCLAW_MODEL", &c.Agents.Defaults.Model)
+	// Default provider/model: env vars are fallback (not override).
+	// If config.json already has a value, keep it; only fill from env when empty.
+	envFallback := func(key string, dst *string) {
+		if *dst == "" {
+			if v := os.Getenv(key); v != "" {
+				*dst = v
+			}
+		}
+	}
+	envFallback("GOCLAW_PROVIDER", &c.Agents.Defaults.Provider)
+	envFallback("GOCLAW_MODEL", &c.Agents.Defaults.Model)
 
 	// Workspace & sessions
 	envStr("GOCLAW_WORKSPACE", &c.Agents.Defaults.Workspace)
