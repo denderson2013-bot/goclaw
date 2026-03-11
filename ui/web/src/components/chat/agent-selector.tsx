@@ -24,6 +24,10 @@ export function AgentSelector({ value, onChange }: AgentSelectorProps) {
       .then((res) => {
         const active = (res.agents ?? []).filter((a) => a.status === "active");
         setAgents(active);
+        // Auto-select first agent if current value doesn't match any active agent
+        if (active.length > 0 && !active.some((a) => a.agent_key === value)) {
+          onChange(active[0]!.agent_key);
+        }
       })
       .catch(() => {});
   }, [http, connected]);
