@@ -40,21 +40,25 @@ export function SkillUploadDialog({ open, onOpenChange, onUpload }: SkillUploadD
   const addFiles = async (fileList: FileList) => {
     const newFiles = Array.from(fileList);
 
-    // Dedup using functional updater to avoid stale closure
-    const pending: FileEntry[] = [];
+    // Build pending list outside updater to avoid StrictMode double-invoke side effects
+    let pending: FileEntry[] = [];
     setEntries((prev) => {
       const existingNames = new Set(prev.map((e) => e.file.name));
       const fresh = newFiles.filter((f) => !existingNames.has(f.name));
-      for (const f of fresh) {
-        pending.push({ id: crypto.randomUUID(), file: f, status: "validating" });
-      }
+      pending = fresh.map((f) => ({ id: crypto.randomUUID(), file: f, status: "validating" as const }));
       return [...prev, ...pending];
     });
     if (pending.length === 0) return;
 
-    // Validate all files concurrently
+    // Validate all files concurrently, catch per-file errors
     const results = await Promise.all(
-      pending.map(async (entry) => ({ id: entry.id, result: await validateSkillZip(entry.file) })),
+      pending.map(async (entry) => {
+        try {
+          return { id: entry.id, result: await validateSkillZip(entry.file) };
+        } catch {
+          return { id: entry.id, result: { valid: false, error: "upload.invalidZip" } as const };
+        }
+      }),
     );
     setEntries((prev) =>
       prev.map((e) => {
@@ -64,8 +68,8 @@ export function SkillUploadDialog({ open, onOpenChange, onUpload }: SkillUploadD
         return {
           ...e,
           status: result.valid ? "valid" : "invalid",
-          name: result.name,
-          slug: result.slug,
+          name: "name" in result ? result.name : undefined,
+          slug: "slug" in result ? result.slug : undefined,
           error: result.error,
         };
       }),
