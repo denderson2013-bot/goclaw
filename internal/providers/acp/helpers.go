@@ -6,28 +6,47 @@ import (
 	"sync"
 )
 
+// sensitiveEnvPrefixes lists env var prefixes stripped from ACP subprocesses.
+var sensitiveEnvPrefixes = []string{
+	"GOCLAW", "CLAUDE", "ANTHROPIC", "OPENAI",
+	"DATABASE", "POSTGRES", "MYSQL", "REDIS", "MONGO",
+	"AWS_", "GOOGLE_", "AZURE_", "GCP_",
+	"GITHUB_", "GH_", "GITLAB_", "BITBUCKET_",
+	"DOCKER_", "REGISTRY_",
+	"STRIPE_", "TWILIO_", "SENDGRID_",
+	"SSH_", "GPG_",
+}
+
+// sensitiveEnvExact lists exact env var names stripped from ACP subprocesses.
+var sensitiveEnvExact = map[string]bool{
+	"DB_DSN": true, "PGPASSWORD": true, "PGUSER": true, "PGHOST": true,
+	"NPM_TOKEN": true, "NPM_CONFIG_TOKEN": true,
+	"HOMEBREW_GITHUB_API_TOKEN": true,
+	"CODECOV_TOKEN": true, "COVERALLS_REPO_TOKEN": true,
+	"SENTRY_DSN": true, "SENTRY_AUTH_TOKEN": true,
+	"SECRET_KEY": true, "JWT_SECRET": true,
+}
+
 // filterACPEnv strips sensitive env vars from the subprocess environment.
 func filterACPEnv(environ []string) []string {
 	var filtered []string
 	for _, e := range environ {
 		key, _, _ := strings.Cut(e, "=")
 		upper := strings.ToUpper(key)
-		switch {
-		case strings.HasPrefix(upper, "GOCLAW"):
+		if sensitiveEnvExact[upper] {
 			continue
-		case strings.HasPrefix(upper, "CLAUDE"):
-			continue
-		case strings.HasPrefix(upper, "ANTHROPIC"):
-			continue
-		case strings.HasPrefix(upper, "OPENAI"):
-			continue
-		case strings.HasPrefix(upper, "DATABASE"):
-			continue
-		case upper == "DB_DSN" || upper == "PGPASSWORD":
-			continue
-		default:
-			filtered = append(filtered, e)
 		}
+		skip := false
+		for _, prefix := range sensitiveEnvPrefixes {
+			if strings.HasPrefix(upper, prefix) {
+				skip = true
+				break
+			}
+		}
+		if skip {
+			continue
+		}
+		filtered = append(filtered, e)
 	}
 	return filtered
 }

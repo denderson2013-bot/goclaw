@@ -395,7 +395,9 @@ func registerACPFromDB(registry *providers.Registry, p store.LLMProviderData) {
 		WorkDir  string   `json:"work_dir"`
 	}
 	if p.Settings != nil {
-		_ = json.Unmarshal(p.Settings, &settings)
+		if err := json.Unmarshal(p.Settings, &settings); err != nil {
+			slog.Warn("acp: invalid settings JSON, using defaults", "name", p.Name, "error", err)
+		}
 	}
 	idleTTL := 5 * time.Minute
 	if settings.IdleTTL != "" {

@@ -31,7 +31,8 @@ func (e *jsonrpcError) Error() string {
 }
 
 // RequestHandler handles agent→client requests (fs, terminal, permission).
-type RequestHandler func(method string, params json.RawMessage) (any, error)
+// Context is derived from the connection lifetime and cancelled when the read loop exits.
+type RequestHandler func(ctx context.Context, method string, params json.RawMessage) (any, error)
 
 // NotifyHandler handles agent→client notifications (session/update).
 type NotifyHandler func(method string, params json.RawMessage)
@@ -107,15 +108,28 @@ func (c *Conn) readLoop() {
 }
 
 // handleRequest processes an agent→client request and sends back the response.
+// Uses a context derived from the connection lifetime so long-running handlers
+// (e.g. waitForExit) are cancelled when the connection closes.
 func (c *Conn) handleRequest(msg *jsonrpcMessage) {
 	var resp jsonrpcMessage
 	resp.JSONRPC = "2.0"
 	resp.ID = msg.ID
 
+	// Create a context that cancels when the connection's read loop exits.
+	ctx, cancel := context.WithCancel(context.Background())
+	go func() {
+		select {
+		case <-c.done:
+			cancel()
+		case <-ctx.Done():
+		}
+	}()
+	defer cancel()
+
 	if c.handler == nil {
 		resp.Error = &jsonrpcError{Code: -32601, Message: "no handler registered"}
 	} else {
-		result, err := c.handler(msg.Method, msg.Params)
+		result, err := c.handler(ctx, msg.Method, msg.Params)
 		if err != nil {
 			resp.Error = &jsonrpcError{Code: -32000, Message: err.Error()}
 		} else {

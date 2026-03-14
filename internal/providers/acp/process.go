@@ -55,6 +55,7 @@ type ProcessPool struct {
 	agentArgs   []string
 	workDir     string
 	idleTTL     time.Duration
+	mu          sync.RWMutex   // protects toolHandler
 	toolHandler RequestHandler
 	done        chan struct{}
 	closeOnce   sync.Once
@@ -74,8 +75,18 @@ func NewProcessPool(binary string, args []string, workDir string, idleTTL time.D
 }
 
 // SetToolHandler sets the agent→client request handler (tool bridge).
+// Must be called before any GetOrSpawn calls.
 func (pp *ProcessPool) SetToolHandler(h RequestHandler) {
+	pp.mu.Lock()
+	defer pp.mu.Unlock()
 	pp.toolHandler = h
+}
+
+// getToolHandler returns the current tool handler (thread-safe).
+func (pp *ProcessPool) getToolHandler() RequestHandler {
+	pp.mu.RLock()
+	defer pp.mu.RUnlock()
+	return pp.toolHandler
 }
 
 // GetOrSpawn returns an existing process for the session key or spawns a new one.
@@ -147,7 +158,7 @@ func (pp *ProcessPool) spawn(ctx context.Context, sessionKey string) (*ACPProces
 		}
 	}
 
-	proc.conn = NewConn(stdinPipe, stdoutPipe, pp.toolHandler, notifyHandler)
+	proc.conn = NewConn(stdinPipe, stdoutPipe, pp.getToolHandler(), notifyHandler)
 	proc.conn.Start()
 
 	// Monitor process exit and log stderr

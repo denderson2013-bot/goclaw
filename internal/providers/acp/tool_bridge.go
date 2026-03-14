@@ -1,6 +1,7 @@
 package acp
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log/slog"
@@ -55,21 +56,30 @@ func NewToolBridge(workspace string, opts ...ToolBridgeOption) *ToolBridge {
 
 // Handle dispatches agent→client requests by method name.
 // Implements the RequestHandler signature for Conn.
-func (tb *ToolBridge) Handle(method string, params json.RawMessage) (any, error) {
+func (tb *ToolBridge) Handle(ctx context.Context, method string, params json.RawMessage) (any, error) {
 	switch method {
 	case "fs/readTextFile":
+		if tb.permMode == "deny-all" {
+			return nil, fmt.Errorf("read denied by permission mode: %s", tb.permMode)
+		}
 		var req ReadTextFileRequest
 		if err := json.Unmarshal(params, &req); err != nil {
 			return nil, fmt.Errorf("invalid params: %w", err)
 		}
 		return tb.readFile(req)
 	case "fs/writeTextFile":
+		if tb.permMode == "deny-all" || tb.permMode == "approve-reads" {
+			return nil, fmt.Errorf("write denied by permission mode: %s", tb.permMode)
+		}
 		var req WriteTextFileRequest
 		if err := json.Unmarshal(params, &req); err != nil {
 			return nil, fmt.Errorf("invalid params: %w", err)
 		}
 		return tb.writeFile(req)
 	case "terminal/create":
+		if tb.permMode == "deny-all" || tb.permMode == "approve-reads" {
+			return nil, fmt.Errorf("terminal denied by permission mode: %s", tb.permMode)
+		}
 		var req CreateTerminalRequest
 		if err := json.Unmarshal(params, &req); err != nil {
 			return nil, fmt.Errorf("invalid params: %w", err)
@@ -92,8 +102,11 @@ func (tb *ToolBridge) Handle(method string, params json.RawMessage) (any, error)
 		if err := json.Unmarshal(params, &req); err != nil {
 			return nil, fmt.Errorf("invalid params: %w", err)
 		}
-		return tb.waitForExit(req)
+		return tb.waitForExit(ctx, req)
 	case "terminal/kill":
+		if tb.permMode == "deny-all" {
+			return nil, fmt.Errorf("terminal kill denied by permission mode: %s", tb.permMode)
+		}
 		var req KillTerminalRequest
 		if err := json.Unmarshal(params, &req); err != nil {
 			return nil, fmt.Errorf("invalid params: %w", err)

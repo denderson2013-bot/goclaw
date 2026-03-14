@@ -31,7 +31,7 @@ type FsCaps struct {
 
 // TerminalCaps declares terminal capabilities.
 type TerminalCaps struct {
-	Enabled bool `json:"terminal"`
+	Enabled bool `json:"enabled"`
 }
 
 // InitializeResponse carries the agent's identity and capabilities.
