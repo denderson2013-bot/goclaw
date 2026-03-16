@@ -590,8 +590,16 @@ func (l *Loop) runLoop(ctx context.Context, req RunRequest) (*RunResult, error) 
 			toolDefs = filtered
 		}
 
+		// Strip assistant prefill messages if configured (proxy providers may reject them)
+		chatMessages := messages
+		if l.stripAssistantPrefill && len(chatMessages) > 0 {
+			if chatMessages[len(chatMessages)-1].Role == "assistant" {
+				chatMessages = chatMessages[:len(chatMessages)-1]
+			}
+		}
+
 		chatReq := providers.ChatRequest{
-			Messages: messages,
+			Messages: chatMessages,
 			Tools:    toolDefs,
 			Model:    l.model,
 			Options: map[string]any{
@@ -778,7 +786,7 @@ func (l *Loop) runLoop(ctx context.Context, req RunRequest) (*RunResult, error) 
 		// Track team_tasks create for orphan detection (argument-based, pre-execution).
 		// Spawn counting is done post-execution so failed spawns don't get counted.
 		for _, tc := range resp.ToolCalls {
-			if tc.Name == "team_tasks" {
+			if l.resolveToolCallName(tc.Name) == "team_tasks" {
 				if action, _ := tc.Arguments["action"].(string); action == "create" {
 					teamTaskCreates++
 				}
@@ -834,27 +842,28 @@ func (l *Loop) runLoop(ctx context.Context, req RunRequest) (*RunResult, error) 
 			argsHash := loopDetector.record(tc.Name, tc.Arguments)
 
 			toolSpanStart := time.Now().UTC()
+			registryName := l.resolveToolCallName(tc.Name)
 			toolSpanID := l.emitToolSpanStart(ctx, toolSpanStart, tc.Name, tc.ID, string(argsJSON))
 			var result *tools.Result
-			if allowedTools != nil && !allowedTools[tc.Name] {
+			if allowedTools != nil && !allowedTools[registryName] {
 				// Attempt lazy activation: deferred MCP tools can be activated on first call
 				// so the LLM can call them by name directly without mcp_tool_search.
-				if l.tools.TryActivateDeferred(tc.Name) {
+				if l.tools.TryActivateDeferred(registryName) {
 					// Verify tool isn't explicitly denied by policy before allowing.
-					if l.toolPolicy != nil && l.toolPolicy.IsDenied(tc.Name, l.agentToolPolicy) {
-						slog.Warn("security.tool_policy_denied_lazy", "agent", l.id, "tool", tc.Name)
+					if l.toolPolicy != nil && l.toolPolicy.IsDenied(registryName, l.agentToolPolicy) {
+						slog.Warn("security.tool_policy_denied_lazy", "agent", l.id, "tool", tc.Name, "resolved", registryName)
 						result = tools.ErrorResult("tool not allowed by policy: " + tc.Name)
 					} else {
-						allowedTools[tc.Name] = true
-						slog.Info("mcp.tool.lazy_activated", "agent", l.id, "tool", tc.Name)
+						allowedTools[registryName] = true
+						slog.Info("mcp.tool.lazy_activated", "agent", l.id, "tool", tc.Name, "resolved", registryName)
 					}
 				} else {
-					slog.Warn("security.tool_policy_blocked", "agent", l.id, "tool", tc.Name)
+					slog.Warn("security.tool_policy_blocked", "agent", l.id, "tool", tc.Name, "resolved", registryName)
 					result = tools.ErrorResult("tool not allowed by policy: " + tc.Name)
 				}
 			}
 			if result == nil {
-				result = l.tools.ExecuteWithContext(ctx, tc.Name, tc.Arguments, req.Channel, req.ChatID, req.PeerKind, req.SessionKey, nil)
+				result = l.tools.ExecuteWithContext(ctx, registryName, tc.Arguments, req.Channel, req.ChatID, req.PeerKind, req.SessionKey, nil)
 			}
 
 			l.emitToolSpanEnd(ctx, toolSpanID, toolSpanStart, result)
@@ -875,7 +884,7 @@ func (l *Loop) runLoop(ctx context.Context, req RunRequest) (*RunResult, error) 
 			}
 
 			// Count successful spawn calls for orphan detection (post-execution).
-			if tc.Name == "spawn" && !result.IsError {
+			if registryName == "spawn" && !result.IsError {
 				if tid, _ := tc.Arguments["team_task_id"].(string); tid != "" {
 					teamTaskSpawns++
 				}
@@ -972,29 +981,30 @@ func (l *Loop) runLoop(ctx context.Context, req RunRequest) (*RunResult, error) 
 					argsJSON, _ := json.Marshal(tc.Arguments)
 					slog.Info("tool call", "agent", l.id, "tool", tc.Name, "args_len", len(argsJSON), "parallel", true)
 					spanStart := time.Now().UTC()
+					registryName := l.resolveToolCallName(tc.Name)
 					// Emit running span inside goroutine — goroutine-safe (channel send only).
 					// End is also emitted here to prevent orphans on ctx cancellation.
 					spanID := l.emitToolSpanStart(ctx, spanStart, tc.Name, tc.ID, string(argsJSON))
 					var result *tools.Result
-					if allowedTools != nil && !allowedTools[tc.Name] {
+					if allowedTools != nil && !allowedTools[registryName] {
 						// Attempt lazy activation for deferred MCP tools.
 						// Note: don't write back to allowedTools — concurrent goroutines share
 						// the map and writes would race. TryActivateDeferred is idempotent.
-						if l.tools.TryActivateDeferred(tc.Name) {
+						if l.tools.TryActivateDeferred(registryName) {
 							// Verify tool isn't explicitly denied by policy before allowing.
-							if l.toolPolicy != nil && l.toolPolicy.IsDenied(tc.Name, l.agentToolPolicy) {
-								slog.Warn("security.tool_policy_denied_lazy", "agent", l.id, "tool", tc.Name)
+							if l.toolPolicy != nil && l.toolPolicy.IsDenied(registryName, l.agentToolPolicy) {
+								slog.Warn("security.tool_policy_denied_lazy", "agent", l.id, "tool", tc.Name, "resolved", registryName)
 								result = tools.ErrorResult("tool not allowed by policy: " + tc.Name)
 							} else {
-								slog.Info("mcp.tool.lazy_activated", "agent", l.id, "tool", tc.Name)
+								slog.Info("mcp.tool.lazy_activated", "agent", l.id, "tool", tc.Name, "resolved", registryName)
 							}
 						} else {
-							slog.Warn("security.tool_policy_blocked", "agent", l.id, "tool", tc.Name)
+							slog.Warn("security.tool_policy_blocked", "agent", l.id, "tool", tc.Name, "resolved", registryName)
 							result = tools.ErrorResult("tool not allowed by policy: " + tc.Name)
 						}
 					}
 					if result == nil {
-						result = l.tools.ExecuteWithContext(ctx, tc.Name, tc.Arguments, req.Channel, req.ChatID, req.PeerKind, req.SessionKey, nil)
+						result = l.tools.ExecuteWithContext(ctx, registryName, tc.Arguments, req.Channel, req.ChatID, req.PeerKind, req.SessionKey, nil)
 					}
 					l.emitToolSpanEnd(ctx, spanID, spanStart, result)
 					resultCh <- indexedResult{idx: idx, tc: tc, result: result, argsJSON: string(argsJSON), spanStart: spanStart}
@@ -1037,7 +1047,7 @@ func (l *Loop) runLoop(ctx context.Context, req RunRequest) (*RunResult, error) 
 				}
 
 				// Count successful spawn calls for orphan detection (post-execution).
-				if r.tc.Name == "spawn" && !r.result.IsError {
+				if l.resolveToolCallName(r.tc.Name) == "spawn" && !r.result.IsError {
 					if tid, _ := r.tc.Arguments["team_task_id"].(string); tid != "" {
 						teamTaskSpawns++
 					}
@@ -1257,7 +1267,16 @@ func (l *Loop) runLoop(ctx context.Context, req RunRequest) (*RunResult, error) 
 	}, nil
 }
 
-// truncateToolArgs returns a copy of arguments with string values truncated to maxLen.
+// resolveToolCallName strips the configured tool call prefix from a name
+// returned by the model, returning the original registry name.
+// Example: prefix "proxy_" + model calls "proxy_exec" → returns "exec".
+func (l *Loop) resolveToolCallName(name string) string {
+	if l.agentToolPolicy != nil && l.agentToolPolicy.ToolCallPrefix != "" {
+		return tools.StripToolPrefix(l.agentToolPolicy.ToolCallPrefix, name)
+	}
+	return name
+}
+
 func truncateToolArgs(args map[string]any, maxLen int) map[string]any {
 	out := make(map[string]any, len(args))
 	for k, v := range args {

@@ -137,7 +137,9 @@
     "contextWindow": "Cửa sổ ngữ cảnh",
     "contextWindowHint": "Giới hạn token cho ngữ cảnh model.",
     "maxToolIterations": "Số lần lặp công cụ tối đa",
-    "maxToolIterationsHint": "Số lần gọi công cụ tối đa mỗi yêu cầu."
+    "maxToolIterationsHint": "Số lần gọi công cụ tối đa mỗi yêu cầu.",
+    "stripAssistantPrefill": "Loại bỏ Assistant Prefill",
+    "stripAssistantPrefillHint": "Loại bỏ tin nhắn assistant ở cuối trước khi gửi đến LLM (dùng cho proxy provider)"
   },
   "workspace": {
     "title": "Workspace",
@@ -309,7 +311,9 @@
       "alsoAllow": "Cũng cho phép",
       "selectToolsAllow": "Chọn công cụ để cho phép...",
       "selectToolsDeny": "Chọn công cụ để từ chối...",
-      "selectToolsAlsoAllow": "Chọn công cụ bổ sung..."
+      "selectToolsAlsoAllow": "Chọn công cụ bổ sung...",
+      "toolCallPrefix": "Tiền tố Tool Call",
+      "toolCallPrefixHint": "Loại bỏ tiền tố này từ tên tool call của model trước khi tra cứu registry."
     },
     "workspaceSharing": {
       "title": "Chia sẻ Workspace",

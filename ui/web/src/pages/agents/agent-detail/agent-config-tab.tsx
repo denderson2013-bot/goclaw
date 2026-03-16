@@ -67,9 +67,7 @@ export function AgentConfigTab({ agent, onUpdate }: AgentConfigTabProps) {
     try {
       const updates: Record<string, unknown> = {
         subagents_config: subEnabled ? sub : null,
-        tools_config: toolsEnabled
-          ? { profile: tools.profile, allow: tools.allow, deny: tools.deny, alsoAllow: tools.alsoAllow, byProvider: tools.byProvider }
-          : {},
+        tools_config: toolsEnabled ? tools : {},
         compaction_config: comp,
         context_pruning: pruneEnabled ? prune : null,
         sandbox_config: sbEnabled ? sb : null,

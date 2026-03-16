@@ -61,6 +61,18 @@ func (a *AgentData) ParseToolsConfig() *config.ToolPolicySpec {
 	if json.Unmarshal(a.ToolsConfig, &c) != nil {
 		return nil
 	}
+	// Backward compat: migrate old "toolPrefix" key to "toolCallPrefix"
+	if c.ToolCallPrefix == "" {
+		var raw map[string]json.RawMessage
+		if json.Unmarshal(a.ToolsConfig, &raw) == nil {
+			if v, ok := raw["toolPrefix"]; ok {
+				var s string
+				if json.Unmarshal(v, &s) == nil && s != "" {
+					c.ToolCallPrefix = s
+				}
+			}
+		}
+	}
 	return &c
 }
 
@@ -152,6 +164,21 @@ func (a *AgentData) ParseMaxTokens() int {
 		return 0
 	}
 	return cfg.MaxTokens
+}
+
+// ParseStripAssistantPrefill extracts strip_assistant_prefill from other_config JSONB.
+// When true, trailing assistant messages are removed before sending to LLM (for proxy providers).
+func (a *AgentData) ParseStripAssistantPrefill() bool {
+	if len(a.OtherConfig) == 0 {
+		return false
+	}
+	var cfg struct {
+		StripAssistantPrefill bool `json:"strip_assistant_prefill"`
+	}
+	if json.Unmarshal(a.OtherConfig, &cfg) != nil {
+		return false
+	}
+	return cfg.StripAssistantPrefill
 }
 
 // ParseSelfEvolve extracts self_evolve from other_config JSONB.

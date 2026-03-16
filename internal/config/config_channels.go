@@ -358,6 +358,7 @@ type ToolPolicySpec struct {
 	Deny       []string                   `json:"deny,omitempty"`
 	AlsoAllow  []string                   `json:"alsoAllow,omitempty"`
 	ByProvider map[string]*ToolPolicySpec `json:"byProvider,omitempty"`
+	ToolCallPrefix string `json:"toolCallPrefix,omitempty"` // prefix to strip from model's tool call names before registry lookup
 }
 
 type WebToolsConfig struct {

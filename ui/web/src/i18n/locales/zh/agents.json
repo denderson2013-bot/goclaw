@@ -137,7 +137,9 @@
     "contextWindow": "上下文窗口",
     "contextWindowHint": "模型上下文的令牌限制。",
     "maxToolIterations": "最大工具迭代次数",
-    "maxToolIterationsHint": "每次请求最大工具调用次数。"
+    "maxToolIterationsHint": "每次请求最大工具调用次数。",
+    "stripAssistantPrefill": "移除 Assistant Prefill",
+    "stripAssistantPrefillHint": "发送到 LLM 前移除末尾的 assistant 消息（适用于代理提供商）"
   },
   "workspace": {
     "title": "工作区",
@@ -309,7 +311,9 @@
       "alsoAllow": "同时允许",
       "selectToolsAllow": "选择要允许的工具...",
       "selectToolsDeny": "选择要拒绝的工具...",
-      "selectToolsAlsoAllow": "选择附加工具..."
+      "selectToolsAlsoAllow": "选择附加工具...",
+      "toolCallPrefix": "工具调用前缀",
+      "toolCallPrefixHint": "从模型的工具调用名称中去除此前缀后再查找注册表。"
     },
     "workspaceSharing": {
       "title": "工作区共享",
