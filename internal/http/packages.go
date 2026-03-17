@@ -6,6 +6,7 @@ import (
 	"regexp"
 
 	"github.com/nextlevelbuilder/goclaw/internal/skills"
+	"github.com/nextlevelbuilder/goclaw/internal/tools"
 )
 
 // validPkgName allows alphanumeric, hyphens, underscores, dots, @, / (for scoped npm).
@@ -28,6 +29,7 @@ func (h *PackagesHandler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("POST /v1/packages/install", h.authMiddleware(h.handleInstall))
 	mux.HandleFunc("POST /v1/packages/uninstall", h.authMiddleware(h.handleUninstall))
 	mux.HandleFunc("GET /v1/packages/runtimes", h.authMiddleware(h.handleRuntimes))
+	mux.HandleFunc("GET /v1/shell-deny-groups", h.authMiddleware(h.handleDenyGroups))
 }
 
 func (h *PackagesHandler) authMiddleware(next http.HandlerFunc) http.HandlerFunc {
@@ -93,4 +95,23 @@ func (h *PackagesHandler) handleUninstall(w http.ResponseWriter, r *http.Request
 // handleRuntimes returns the availability of prerequisite runtimes.
 func (h *PackagesHandler) handleRuntimes(w http.ResponseWriter, _ *http.Request) {
 	writeJSON(w, http.StatusOK, skills.CheckRuntimes())
+}
+
+// handleDenyGroups returns all registered shell deny groups with name, description, and default state.
+func (h *PackagesHandler) handleDenyGroups(w http.ResponseWriter, _ *http.Request) {
+	type groupInfo struct {
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		Default     bool   `json:"default"`
+	}
+	groups := make([]groupInfo, 0, len(tools.DenyGroupRegistry))
+	for _, name := range tools.DenyGroupNames() {
+		g := tools.DenyGroupRegistry[name]
+		groups = append(groups, groupInfo{
+			Name:        g.Name,
+			Description: g.Description,
+			Default:     g.Default,
+		})
+	}
+	writeJSON(w, http.StatusOK, map[string]any{"groups": groups})
 }
