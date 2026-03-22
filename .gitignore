@@ -51,3 +51,4 @@ ui/simple-saas
 .opencode/
 .env.local
 *.env
+CREDENCIAIS.txt
