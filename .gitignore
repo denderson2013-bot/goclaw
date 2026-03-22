@@ -49,3 +49,5 @@ ui/simple-saas
 # AI tool config directories (user-specific)
 .gemini/
 .opencode/
+.env.local
+*.env
