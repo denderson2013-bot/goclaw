@@ -34,6 +34,7 @@ import enActivity from "./locales/en/activity.json";
 import enApiKeys from "./locales/en/api-keys.json";
 import enCliCredentials from "./locales/en/cli-credentials.json";
 import enPackages from "./locales/en/packages.json";
+import enVoice from "./locales/en/voice.json";
 
 // --- VI namespaces ---
 import viCommon from "./locales/vi/common.json";
@@ -68,6 +69,7 @@ import viActivity from "./locales/vi/activity.json";
 import viApiKeys from "./locales/vi/api-keys.json";
 import viCliCredentials from "./locales/vi/cli-credentials.json";
 import viPackages from "./locales/vi/packages.json";
+import viVoice from "./locales/vi/voice.json";
 
 // --- ZH namespaces ---
 import zhCommon from "./locales/zh/common.json";
@@ -102,6 +104,7 @@ import zhActivity from "./locales/zh/activity.json";
 import zhApiKeys from "./locales/zh/api-keys.json";
 import zhCliCredentials from "./locales/zh/cli-credentials.json";
 import zhPackages from "./locales/zh/packages.json";
+import zhVoice from "./locales/zh/voice.json";
 
 // --- PT-BR namespaces ---
 import ptBrCommon from "./locales/pt-BR/common.json";
@@ -136,6 +139,7 @@ import ptBrActivity from "./locales/pt-BR/activity.json";
 import ptBrApiKeys from "./locales/pt-BR/api-keys.json";
 import ptBrCliCredentials from "./locales/pt-BR/cli-credentials.json";
 import ptBrPackages from "./locales/pt-BR/packages.json";
+import ptBrVoice from "./locales/pt-BR/voice.json";
 
 const STORAGE_KEY = "focosia:language";
 
@@ -155,7 +159,7 @@ const ns = [
   "channels", "providers", "traces", "events",
   "usage", "approvals", "nodes", "logs", "tools", "mcp", "tts",
   "setup", "memory", "storage", "pending-messages", "contacts", "activity", "api-keys",
-  "cli-credentials", "packages",
+  "cli-credentials", "packages", "voice",
 ] as const;
 
 i18n.use(initReactI18next).init({
@@ -172,6 +176,7 @@ i18n.use(initReactI18next).init({
       contacts: enContacts, activity: enActivity, "api-keys": enApiKeys,
       "cli-credentials": enCliCredentials,
       packages: enPackages,
+      voice: enVoice,
     },
     vi: {
       common: viCommon, sidebar: viSidebar, topbar: viTopbar, login: viLogin,
@@ -185,6 +190,7 @@ i18n.use(initReactI18next).init({
       contacts: viContacts, activity: viActivity, "api-keys": viApiKeys,
       "cli-credentials": viCliCredentials,
       packages: viPackages,
+      voice: viVoice,
     },
     zh: {
       common: zhCommon, sidebar: zhSidebar, topbar: zhTopbar, login: zhLogin,
@@ -198,6 +204,7 @@ i18n.use(initReactI18next).init({
       contacts: zhContacts, activity: zhActivity, "api-keys": zhApiKeys,
       "cli-credentials": zhCliCredentials,
       packages: zhPackages,
+      voice: zhVoice,
     },
     "pt-BR": {
       common: ptBrCommon, sidebar: ptBrSidebar, topbar: ptBrTopbar, login: ptBrLogin,
@@ -211,6 +218,7 @@ i18n.use(initReactI18next).init({
       contacts: ptBrContacts, activity: ptBrActivity, "api-keys": ptBrApiKeys,
       "cli-credentials": ptBrCliCredentials,
       packages: ptBrPackages,
+      voice: ptBrVoice,
     },
   },
   ns: [...ns],

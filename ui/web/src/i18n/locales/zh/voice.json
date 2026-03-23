@@ -1,0 +1,17 @@
+{
+  "title": "语音助手",
+  "statusReady": "就绪",
+  "statusListening": "正在聆听...",
+  "statusThinking": "正在思考...",
+  "statusSpeaking": "正在播报...",
+  "selectAgent": "选择代理",
+  "noAgents": "没有可用的代理",
+  "tapToSpeak": "点击说话",
+  "tapToStop": "点击停止",
+  "tapToCancel": "点击取消",
+  "spaceHint": "按空格键",
+  "conversation": "对话",
+  "micPermissionDenied": "麦克风权限被拒绝",
+  "speechNotRecognized": "无法识别语音",
+  "connectionRequired": "需要连接"
+}

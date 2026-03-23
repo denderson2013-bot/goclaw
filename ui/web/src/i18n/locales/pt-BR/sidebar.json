@@ -38,6 +38,7 @@
     "cliCredentials": "Credenciais CLI",
     "apiKeys": "Chaves de API",
     "apiDocs": "Documentação da API",
-    "packages": "Pacotes"
+    "packages": "Pacotes",
+    "voice": "Assistente de Voz"
   }
 }

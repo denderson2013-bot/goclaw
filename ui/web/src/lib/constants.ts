@@ -38,6 +38,7 @@ export const ROUTES = {
   API_KEYS: "/api-keys",
   PACKAGES: "/packages",
   SETUP: "/setup",
+  VOICE: "/voice",
 } as const;
 
 export const LOCAL_STORAGE_KEYS = {

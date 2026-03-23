@@ -1,0 +1,17 @@
+{
+  "title": "Tro ly giong noi",
+  "statusReady": "San sang",
+  "statusListening": "Dang nghe...",
+  "statusThinking": "Dang suy nghi...",
+  "statusSpeaking": "Dang noi...",
+  "selectAgent": "Chon agent",
+  "noAgents": "Khong co agent nao",
+  "tapToSpeak": "Nhan de noi",
+  "tapToStop": "Nhan de dung",
+  "tapToCancel": "Nhan de huy",
+  "spaceHint": "Nhan phim Space",
+  "conversation": "Hoi thoai",
+  "micPermissionDenied": "Quyen truy cap micro bi tu choi",
+  "speechNotRecognized": "Khong the nhan dien giong noi",
+  "connectionRequired": "Can ket noi"
+}
