@@ -1,380 +1,144 @@
-import { useState, useCallback, useRef, useEffect } from "react";
-import { useWs, useHttp } from "@/hooks/use-ws";
+import { useCallback, useRef, useState } from "react";
+import { useWs } from "@/hooks/use-ws";
 import { useWsEvent } from "@/hooks/use-ws-event";
-import { Methods, Events, ChatEventTypes } from "@/api/protocol";
-import { useVoiceRecorder } from "./use-voice-recorder";
-import { useSpeechRecognition } from "./use-speech-recognition";
 
-export type VoiceStatus = "idle" | "listening" | "thinking" | "speaking";
-
-export interface ConversationEntry {
-  role: "user" | "assistant";
-  content: string;
-  timestamp: number;
-}
-
-interface UseVoiceChatOptions {
-  agentId: string;
-  lang?: string;
-}
-
-interface UseVoiceChatReturn {
-  status: VoiceStatus;
-  conversation: ConversationEntry[];
-  currentTranscript: string;
-  streamingResponse: string;
-  isRecording: boolean;
-  error: string | null;
-  startListening: () => Promise<void>;
-  stopListening: () => Promise<void>;
-  cancel: () => void;
-  clearConversation: () => void;
-}
+export type VoiceState = "idle" | "listening" | "thinking" | "speaking";
 
 /**
- * Orchestrates the full voice flow: listen -> transcribe -> send -> receive -> speak.
- * Uses MediaRecorder + /v1/tts/transcribe for STT, with browser SpeechRecognition fallback.
- * Uses /v1/tts/synthesize for TTS, with browser SpeechSynthesis fallback.
+ * Clean text for natural human speech:
+ * - Remove emojis (so it doesn't say "emoji roxo")
+ * - Remove markdown formatting
+ * - Remove URLs
+ * - Remove code blocks
+ * - Clean up excessive whitespace
  */
-export function useVoiceChat({ agentId, lang = "pt-BR" }: UseVoiceChatOptions): UseVoiceChatReturn {
+function cleanForSpeech(text: string): string {
+  let s = text;
+  // Remove all emoji unicode ranges
+  s = s.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F900}-\u{1F9FF}\u{200D}\u{20E3}\u{E0020}-\u{E007F}\u{2764}\u{FE0F}\u{1FA70}-\u{1FAFF}\u{2B50}\u{23F0}-\u{23FF}\u{2934}-\u{2935}\u{25AA}-\u{25AB}\u{25B6}\u{25C0}\u{25FB}-\u{25FE}\u{2614}-\u{2615}\u{2648}-\u{2653}\u{267F}\u{2693}\u{26A1}\u{26AA}-\u{26AB}\u{26BD}-\u{26BE}\u{26C4}-\u{26C5}\u{26CE}\u{26D4}\u{26EA}\u{26F2}-\u{26F3}\u{26F5}\u{26FA}\u{26FD}\u{2702}\u{2705}\u{2708}-\u{270D}\u{270F}\u{2712}\u{2714}\u{2716}\u{271D}\u{2721}\u{2728}\u{2733}-\u{2734}\u{2744}\u{2747}\u{274C}\u{274E}\u{2753}-\u{2755}\u{2757}\u{2763}-\u{2764}\u{2795}-\u{2797}\u{27A1}\u{27B0}\u{27BF}\u{2934}-\u{2935}\u{2B05}-\u{2B07}\u{2B1B}-\u{2B1C}\u{2B55}\u{3030}\u{303D}\u{3297}\u{3299}]/gu, "");
+  // Remove markdown bold/italic
+  s = s.replace(/\*\*(.+?)\*\*/g, "$1");
+  s = s.replace(/\*(.+?)\*/g, "$1");
+  s = s.replace(/__(.+?)__/g, "$1");
+  s = s.replace(/_(.+?)_/g, "$1");
+  // Remove code blocks and inline code
+  s = s.replace(/```[\s\S]*?```/g, "");
+  s = s.replace(/`(.+?)`/g, "$1");
+  // Remove markdown headers
+  s = s.replace(/^#{1,6}\s+/gm, "");
+  // Remove markdown links, keep text
+  s = s.replace(/\[(.+?)\]\(.+?\)/g, "$1");
+  // Remove markdown lists markers
+  s = s.replace(/^[\s]*[-*+]\s+/gm, "");
+  s = s.replace(/^[\s]*\d+\.\s+/gm, "");
+  // Remove URLs
+  s = s.replace(/https?:\/\/[^\s]+/g, "");
+  // Remove triple+ newlines
+  s = s.replace(/\n{2,}/g, ". ");
+  // Collapse whitespace
+  s = s.replace(/\s{2,}/g, " ");
+  return s.trim();
+}
+
+function speakText(text: string, onEnd: () => void) {
+  if (!window.speechSynthesis || !text) {
+    onEnd();
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+  const cleaned = cleanForSpeech(text);
+  if (!cleaned) {
+    onEnd();
+    return;
+  }
+
+  const utterance = new SpeechSynthesisUtterance(cleaned);
+  utterance.lang = "pt-BR";
+  utterance.rate = 1.05;
+  utterance.pitch = 1.0;
+  utterance.volume = 1.0;
+
+  // Find best pt-BR voice
+  const voices = window.speechSynthesis.getVoices();
+  const best =
+    voices.find((v) => v.lang === "pt-BR" && v.name.includes("Google")) ||
+    voices.find((v) => v.lang === "pt-BR" && v.name.includes("Francisca")) ||
+    voices.find((v) => v.lang === "pt-BR" && v.name.includes("Thalita")) ||
+    voices.find((v) => v.lang === "pt-BR" && v.name.includes("Luciana")) ||
+    voices.find((v) => v.lang === "pt-BR") ||
+    voices.find((v) => v.lang.startsWith("pt"));
+  if (best) utterance.voice = best;
+
+  utterance.onend = onEnd;
+  utterance.onerror = onEnd;
+  window.speechSynthesis.speak(utterance);
+}
+
+export function useVoiceChat(agentId: string | null) {
   const ws = useWs();
-  const http = useHttp();
-
-  const [status, setStatus] = useState<VoiceStatus>("idle");
-  const [conversation, setConversation] = useState<ConversationEntry[]>([]);
-  const [currentTranscript, setCurrentTranscript] = useState("");
-  const [streamingResponse, setStreamingResponse] = useState("");
-  const [error, setError] = useState<string | null>(null);
-
+  const [state, setState] = useState<VoiceState>("idle");
   const streamRef = useRef("");
-  const runIdRef = useRef<string | null>(null);
-  const expectingRunRef = useRef(false);
-  const agentIdRef = useRef(agentId);
-  agentIdRef.current = agentId;
-  const cancelledRef = useRef(false);
-  const isSpeakingRef = useRef(false);
+  const sessionKey = agentId ? `agent:${agentId}:voice:direct:browser-voice` : "";
 
-  const recorder = useVoiceRecorder();
-  const speechRecognition = useSpeechRecognition(lang);
+  // Listen for agent streaming events
+  useWsEvent(
+    "agent",
+    useCallback(
+      (payload: unknown) => {
+        const event = payload as {
+          type: string;
+          agentId?: string;
+          payload?: { content?: string };
+        };
+        if (event.agentId !== agentId) return;
 
-  // Session key for voice chat
-  const sessionKey = `agent:${agentId}:voice:direct:browser-voice`;
-
-  // Handle agent events for streaming response
-  const handleAgentEvent = useCallback((payload: unknown) => {
-    const event = payload as {
-      type: string;
-      runId: string;
-      agentId: string;
-      payload?: { content?: string };
-    };
-    if (!event) return;
-
-    if (event.type === "run.started" && event.agentId === agentIdRef.current) {
-      if (expectingRunRef.current) {
-        runIdRef.current = event.runId;
-        expectingRunRef.current = false;
-        setStatus("thinking");
-        setStreamingResponse("");
-        streamRef.current = "";
-      }
-      return;
-    }
-
-    if (!runIdRef.current || event.runId !== runIdRef.current) return;
-
-    if (event.type === "chunk") {
-      const content = event.payload?.content ?? "";
-      streamRef.current += content;
-      setStreamingResponse(streamRef.current);
-      // Switch to "thinking" with text (could also be "speaking" but we wait for completion)
-      if (status === "thinking") {
-        setStatus("thinking");
-      }
-    }
-
-    if (event.type === "run.completed" || event.type === "run.failed") {
-      const finalText = streamRef.current;
-      runIdRef.current = null;
-
-      if (finalText && !cancelledRef.current) {
-        // Add assistant message to conversation
-        setConversation((prev) => [
-          ...prev,
-          { role: "assistant", content: finalText, timestamp: Date.now() },
-        ]);
-        // Speak the response
-        speakText(finalText);
-      } else {
-        setStatus("idle");
-      }
-    }
-  }, [status]);
-
-  useWsEvent(Events.AGENT, handleAgentEvent);
-
-  // Also handle chat events (for chunk streaming)
-  const handleChatEvent = useCallback((payload: unknown) => {
-    const event = payload as {
-      type: string;
-      sessionKey?: string;
-      content?: string;
-    };
-    if (!event || event.sessionKey !== sessionKey) return;
-
-    if (event.type === ChatEventTypes.CHUNK) {
-      const content = event.content ?? "";
-      streamRef.current += content;
-      setStreamingResponse(streamRef.current);
-    }
-  }, [sessionKey]);
-
-  useWsEvent(Events.CHAT, handleChatEvent);
-
-  /**
-   * Transcribe audio blob using backend /v1/tts/transcribe.
-   * Falls back to browser SpeechRecognition transcript if backend fails.
-   */
-  const transcribeAudio = useCallback(async (blob: Blob, browserTranscript: string): Promise<string> => {
-    try {
-      const formData = new FormData();
-      formData.append("file", blob, "audio.webm");
-      formData.append("language", lang);
-
-      const res = await http.upload<{ text: string }>("/v1/tts/transcribe", formData);
-      if (res.text && res.text.trim()) {
-        return res.text.trim();
-      }
-    } catch {
-      // Backend transcription failed, use browser fallback
-    }
-
-    // Fallback: use browser SpeechRecognition transcript
-    if (browserTranscript.trim()) {
-      return browserTranscript.trim();
-    }
-
-    return "";
-  }, [http, lang]);
-
-  /**
-   * Speak text using backend /v1/tts/synthesize or browser SpeechSynthesis fallback.
-   */
-  const speakText = useCallback(async (text: string) => {
-    if (cancelledRef.current) {
-      setStatus("idle");
-      return;
-    }
-
-    setStatus("speaking");
-    isSpeakingRef.current = true;
-
-    try {
-      // Try backend TTS first
-      const res = await fetch("/v1/tts/synthesize", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text, language: lang }),
-      });
-
-      if (res.ok) {
-        const audioBlob = await res.blob();
-        if (audioBlob.size > 0) {
-          const audioUrl = URL.createObjectURL(audioBlob);
-          const audio = new Audio(audioUrl);
-
-          await new Promise<void>((resolve) => {
-            audio.onended = () => {
-              URL.revokeObjectURL(audioUrl);
-              resolve();
-            };
-            audio.onerror = () => {
-              URL.revokeObjectURL(audioUrl);
-              resolve();
-            };
-            audio.play().catch(() => resolve());
-          });
-
-          isSpeakingRef.current = false;
-          if (!cancelledRef.current) setStatus("idle");
-          return;
+        if (event.type === "chunk") {
+          streamRef.current += event.payload?.content ?? "";
         }
+        if (event.type === "run.completed") {
+          const response = streamRef.current;
+          streamRef.current = "";
+          if (response) {
+            setState("speaking");
+            speakText(response, () => setState("idle"));
+          } else {
+            setState("idle");
+          }
+        }
+        if (event.type === "run.failed") {
+          streamRef.current = "";
+          setState("idle");
+        }
+      },
+      [agentId]
+    )
+  );
+
+  const sendMessage = useCallback(
+    async (text: string) => {
+      if (!agentId || !text.trim()) return;
+      setState("thinking");
+      streamRef.current = "";
+      try {
+        await ws.call(
+          "chat.send",
+          { agentId, sessionKey, message: text, stream: true },
+          600_000
+        );
+      } catch {
+        setState("idle");
       }
-    } catch {
-      // Backend TTS failed, use browser fallback
-    }
+    },
+    [agentId, sessionKey, ws]
+  );
 
-    // Fallback: browser SpeechSynthesis
-    if ("speechSynthesis" in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = lang;
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
-
-      await new Promise<void>((resolve) => {
-        utterance.onend = () => resolve();
-        utterance.onerror = () => resolve();
-        window.speechSynthesis.speak(utterance);
-      });
-    }
-
-    isSpeakingRef.current = false;
-    if (!cancelledRef.current) setStatus("idle");
-  }, [lang]);
-
-  /**
-   * Send transcribed text to the agent via WebSocket.
-   */
-  const sendMessage = useCallback(async (message: string) => {
-    if (!ws.isConnected || !message.trim()) {
-      setStatus("idle");
-      return;
-    }
-
-    setStatus("thinking");
-    setStreamingResponse("");
-    streamRef.current = "";
-    expectingRunRef.current = true;
-
-    try {
-      await ws.call(
-        Methods.CHAT_SEND,
-        {
-          agentId: agentIdRef.current,
-          sessionKey,
-          message: message.trim(),
-          stream: true,
-        },
-        600_000,
-      );
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send message");
-      setStatus("idle");
-      expectingRunRef.current = false;
-    }
-  }, [ws, sessionKey]);
-
-  /**
-   * Start the voice listening flow.
-   * Records audio + uses browser SpeechRecognition simultaneously.
-   */
-  const startListening = useCallback(async () => {
-    setError(null);
-    cancelledRef.current = false;
-    setCurrentTranscript("");
-    setStreamingResponse("");
-
-    // Start both recorder and speech recognition
-    await recorder.startRecording();
-
-    if (speechRecognition.supported) {
-      speechRecognition.startListening();
-    }
-
-    setStatus("listening");
-  }, [recorder, speechRecognition]);
-
-  /**
-   * Stop listening and process the recorded audio.
-   */
-  const stopListening = useCallback(async () => {
-    // Stop both recorder and speech recognition
-    if (speechRecognition.isListening) {
-      speechRecognition.stopListening();
-    }
-
-    const blob = await recorder.stopRecording();
-
-    // Get browser transcript (combine final + interim)
-    const browserTranscript = speechRecognition.transcript || speechRecognition.interimTranscript || "";
-
-    if (!blob && !browserTranscript) {
-      setStatus("idle");
-      return;
-    }
-
-    setStatus("thinking");
-
-    // Transcribe
-    const text = blob
-      ? await transcribeAudio(blob, browserTranscript)
-      : browserTranscript;
-
-    if (!text) {
-      setError("Could not recognize speech");
-      setStatus("idle");
-      return;
-    }
-
-    setCurrentTranscript(text);
-
-    // Add user message to conversation
-    setConversation((prev) => [
-      ...prev,
-      { role: "user", content: text, timestamp: Date.now() },
-    ]);
-
-    // Send to agent
-    await sendMessage(text);
-  }, [recorder, speechRecognition, transcribeAudio, sendMessage]);
-
-  /**
-   * Cancel any ongoing operation.
-   */
-  const cancel = useCallback(() => {
-    cancelledRef.current = true;
-
-    if (recorder.isRecording) {
-      recorder.stopRecording();
-    }
-    if (speechRecognition.isListening) {
-      speechRecognition.stopListening();
-    }
-    if (isSpeakingRef.current) {
-      window.speechSynthesis?.cancel();
-    }
-
-    runIdRef.current = null;
-    expectingRunRef.current = false;
-    setStatus("idle");
-    setStreamingResponse("");
-    streamRef.current = "";
-  }, [recorder, speechRecognition]);
-
-  const clearConversation = useCallback(() => {
-    setConversation([]);
-    setCurrentTranscript("");
-    setStreamingResponse("");
-    setError(null);
+  const stopSpeaking = useCallback(() => {
+    window.speechSynthesis?.cancel();
+    setState("idle");
   }, []);
 
-  // Propagate recorder/speech errors
-  useEffect(() => {
-    if (recorder.error) setError(recorder.error);
-  }, [recorder.error]);
+  const setListening = useCallback(() => setState("listening"), []);
 
-  useEffect(() => {
-    if (speechRecognition.error) setError(speechRecognition.error);
-  }, [speechRecognition.error]);
-
-  // Update interim transcript while listening
-  useEffect(() => {
-    if (status === "listening") {
-      const interim = speechRecognition.transcript || speechRecognition.interimTranscript;
-      if (interim) setCurrentTranscript(interim);
-    }
-  }, [status, speechRecognition.transcript, speechRecognition.interimTranscript]);
-
-  return {
-    status,
-    conversation,
-    currentTranscript,
-    streamingResponse,
-    isRecording: recorder.isRecording,
-    error,
-    startListening,
-    stopListening,
-    cancel,
-    clearConversation,
-  };
+  return { state, setState: setListening, sendMessage, stopSpeaking };
 }

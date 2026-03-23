@@ -1,384 +1,236 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
-import { Mic, MicOff, ArrowLeft, Bot, Volume2, Trash2 } from "lucide-react";
+import { Mic, MicOff, ChevronDown } from "lucide-react";
+import { useVoiceChat, type VoiceState } from "./hooks/use-voice-chat";
+import { useSpeechRecognition } from "./hooks/use-speech-recognition";
 import { useWs } from "@/hooks/use-ws";
-import { Methods } from "@/api/protocol";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { ROUTES } from "@/lib/constants";
-import { useVoiceChat, type VoiceStatus, type ConversationEntry } from "./hooks/use-voice-chat";
 
 interface Agent {
   id: string;
-  name: string;
+  display_name: string;
+  agent_key: string;
 }
 
-// --- Orb Animation Component ---
+const ORB_COLORS: Record<VoiceState, string> = {
+  idle: "rgba(168, 85, 247, 0.3)",
+  listening: "rgba(168, 85, 247, 0.9)",
+  thinking: "rgba(59, 130, 246, 0.8)",
+  speaking: "rgba(34, 197, 94, 0.8)",
+};
 
-function VoiceOrb({ status }: { status: VoiceStatus }) {
-  const orbColor = {
-    idle: "from-purple-500/30 to-purple-700/20",
-    listening: "from-purple-500 to-purple-600",
-    thinking: "from-blue-500 to-blue-600",
-    speaking: "from-green-500 to-green-600",
-  }[status];
+const ORB_GLOW: Record<VoiceState, string> = {
+  idle: "0 0 30px rgba(168, 85, 247, 0.2)",
+  listening: "0 0 60px rgba(168, 85, 247, 0.6), 0 0 120px rgba(168, 85, 247, 0.3)",
+  thinking: "0 0 60px rgba(59, 130, 246, 0.5), 0 0 120px rgba(59, 130, 246, 0.2)",
+  speaking: "0 0 60px rgba(34, 197, 94, 0.5), 0 0 120px rgba(34, 197, 94, 0.2)",
+};
 
-  const glowColor = {
-    idle: "shadow-purple-500/10",
-    listening: "shadow-purple-500/50",
-    thinking: "shadow-blue-500/50",
-    speaking: "shadow-green-500/50",
-  }[status];
-
-  const pulseClass = status !== "idle" ? "animate-voice-pulse" : "";
-
-  return (
-    <div className="relative flex items-center justify-center">
-      {/* Outer glow rings */}
-      {status !== "idle" && (
-        <>
-          <div
-            className={`absolute size-56 rounded-full bg-gradient-to-br ${orbColor} opacity-20 animate-ping`}
-            style={{ animationDuration: "2s" }}
-          />
-          <div
-            className={`absolute size-48 rounded-full bg-gradient-to-br ${orbColor} opacity-30 animate-pulse`}
-            style={{ animationDuration: "1.5s" }}
-          />
-        </>
-      )}
-
-      {/* Main orb */}
-      <div
-        className={`relative z-10 size-[200px] rounded-full bg-gradient-to-br ${orbColor} shadow-2xl ${glowColor} ${pulseClass} flex items-center justify-center transition-all duration-500`}
-      >
-        {/* Inner glow */}
-        <div className="absolute inset-4 rounded-full bg-white/5 backdrop-blur-sm" />
-
-        {/* Icon */}
-        <div className="relative z-20">
-          {status === "idle" && <Bot className="size-16 text-purple-300/60" />}
-          {status === "listening" && <Mic className="size-16 text-white animate-pulse" />}
-          {status === "thinking" && (
-            <div className="flex gap-1.5">
-              <div className="size-3 rounded-full bg-white animate-bounce" style={{ animationDelay: "0ms" }} />
-              <div className="size-3 rounded-full bg-white animate-bounce" style={{ animationDelay: "150ms" }} />
-              <div className="size-3 rounded-full bg-white animate-bounce" style={{ animationDelay: "300ms" }} />
-            </div>
-          )}
-          {status === "speaking" && <Volume2 className="size-16 text-white animate-pulse" />}
-        </div>
-      </div>
-
-      {/* Waveform bars (visible when listening) */}
-      {status === "listening" && (
-        <div className="absolute bottom-0 flex items-end gap-1 h-8">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div
-              key={i}
-              className="w-1 bg-purple-400 rounded-full animate-waveform"
-              style={{
-                animationDelay: `${i * 80}ms`,
-                height: "4px",
-              }}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// --- Status Text ---
-
-function StatusText({ status, t }: { status: VoiceStatus; t: (key: string) => string }) {
-  const text = {
-    idle: t("statusReady"),
-    listening: t("statusListening"),
-    thinking: t("statusThinking"),
-    speaking: t("statusSpeaking"),
-  }[status];
-
-  const color = {
-    idle: "text-purple-300/60",
-    listening: "text-purple-300",
-    thinking: "text-blue-300",
-    speaking: "text-green-300",
-  }[status];
-
-  return (
-    <p className={`text-lg font-medium tracking-wide ${color} transition-colors duration-300`}>
-      {text}
-    </p>
-  );
-}
-
-// --- Conversation Bubble ---
-
-function ConversationBubble({ entry }: { entry: ConversationEntry }) {
-  const isUser = entry.role === "user";
-
-  return (
-    <div className={`flex ${isUser ? "justify-end" : "justify-start"} mb-3`}>
-      <div
-        className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-          isUser
-            ? "bg-purple-600/40 text-purple-100 rounded-br-sm"
-            : "bg-white/10 text-gray-200 rounded-bl-sm"
-        }`}
-      >
-        {entry.content}
-      </div>
-    </div>
-  );
-}
-
-// --- Main Page ---
+const STATUS_TEXT: Record<string, Record<VoiceState, string>> = {
+  "pt-BR": { idle: "Toque para falar", listening: "Ouvindo...", thinking: "Pensando...", speaking: "Falando..." },
+  en: { idle: "Tap to speak", listening: "Listening...", thinking: "Thinking...", speaking: "Speaking..." },
+  vi: { idle: "Chạm để nói", listening: "Đang nghe...", thinking: "Đang suy nghĩ...", speaking: "Đang nói..." },
+  zh: { idle: "点击说话", listening: "聆听中...", thinking: "思考中...", speaking: "说话中..." },
+};
 
 export function VoicePage() {
-  const { t } = useTranslation("voice");
-  const navigate = useNavigate();
+  const { i18n } = useTranslation();
   const ws = useWs();
-
   const [agents, setAgents] = useState<Agent[]>([]);
-  const [selectedAgentId, setSelectedAgentId] = useState("default");
-  const scrollEndRef = useRef<HTMLDivElement>(null);
+  const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
+  const [showAgentPicker, setShowAgentPicker] = useState(false);
+  const { state, setState: setListening, sendMessage, stopSpeaking } = useVoiceChat(selectedAgent);
+  const recognition = useSpeechRecognition("pt-BR");
 
-  // Load agents list
+  // Load agents
   useEffect(() => {
-    if (!ws.isConnected) return;
+    ws.call<{ agents: Agent[] }>("agents.list", {}).then((res: { agents?: Agent[] } | undefined) => {
+      const list = res?.agents ?? [];
+      setAgents(list);
+      if (list.length > 0 && !selectedAgent) {
+        const def = list.find((a: Agent) => a.agent_key === "juh") ?? list[0];
+        if (def) setSelectedAgent(def.id);
+      }
+    }).catch(() => {});
+  }, [ws, selectedAgent]);
 
-    ws.call<{ agents: Agent[] }>(Methods.AGENTS_LIST)
-      .then((res) => {
-        const list = res.agents ?? [];
-        setAgents(list);
-        if (list.length > 0 && !list.find((a) => a.id === selectedAgentId)) {
-          setSelectedAgentId(list[0]!.id);
-        }
-      })
-      .catch(() => {
-        // ignore
-      });
-  }, [ws, ws.isConnected]);
+  // Handle voice result — auto-send to agent
+  const handleVoiceResult = useCallback(
+    (text: string) => {
+      if (text.trim()) {
+        sendMessage(text);
+      }
+    },
+    [sendMessage]
+  );
 
-  const voiceChat = useVoiceChat({
-    agentId: selectedAgentId,
-    lang: "pt-BR",
-  });
-
-  const {
-    status,
-    conversation,
-    currentTranscript,
-    streamingResponse,
-    error,
-    startListening,
-    stopListening,
-    cancel,
-    clearConversation,
-  } = voiceChat;
-
-  // Auto-scroll conversation
-  useEffect(() => {
-    scrollEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [conversation, streamingResponse]);
-
-  // Handle mic button
-  const handleMicPress = useCallback(async () => {
-    if (status === "listening") {
-      await stopListening();
-    } else if (status === "idle") {
-      await startListening();
-    } else if (status === "speaking" || status === "thinking") {
-      cancel();
+  // Toggle mic
+  const toggleMic = useCallback(() => {
+    if (state === "speaking") {
+      stopSpeaking();
+      return;
     }
-  }, [status, startListening, stopListening, cancel]);
+    if (state === "listening") {
+      recognition.stop();
+      return;
+    }
+    if (state !== "idle") return;
 
-  // Keyboard shortcut: space to toggle
+    setListening();
+    recognition.start(handleVoiceResult);
+  }, [state, recognition, handleVoiceResult, stopSpeaking, setListening]);
+
+  // Space bar shortcut
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.code === "Space" && e.target === document.body) {
+      if (e.code === "Space" && !e.target?.toString().includes("Input") && !e.target?.toString().includes("Textarea")) {
         e.preventDefault();
-        handleMicPress();
+        toggleMic();
       }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [handleMicPress]);
+  }, [toggleMic]);
 
-  const micButtonLabel = {
-    idle: t("tapToSpeak"),
-    listening: t("tapToStop"),
-    thinking: t("tapToCancel"),
-    speaking: t("tapToCancel"),
-  }[status];
+  // Load voices on mount
+  useEffect(() => {
+    window.speechSynthesis?.getVoices();
+    const handler = () => window.speechSynthesis?.getVoices();
+    window.speechSynthesis?.addEventListener("voiceschanged", handler);
+    return () => window.speechSynthesis?.removeEventListener("voiceschanged", handler);
+  }, []);
+
+  const lang = i18n.language || "en";
+  const statusTexts = STATUS_TEXT[lang] ?? STATUS_TEXT["en"];
+  const agentName = agents.find((a) => a.id === selectedAgent)?.display_name || "Agente";
+  const isActive = state === "listening" || state === "thinking" || state === "speaking";
 
   return (
-    <div className="flex flex-col h-dvh bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white overflow-hidden">
-      {/* --- Custom animation styles --- */}
+    <div className="relative flex h-dvh flex-col items-center justify-center bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 overflow-hidden select-none">
+      {/* Inline animations */}
       <style>{`
-        @keyframes voice-pulse {
+        @keyframes orbPulse {
           0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
+          50% { transform: scale(1.08); }
         }
-        .animate-voice-pulse {
-          animation: voice-pulse 2s ease-in-out infinite;
+        @keyframes orbBreath {
+          0%, 100% { transform: scale(1); opacity: 0.3; }
+          50% { transform: scale(1.03); opacity: 0.5; }
         }
-        @keyframes waveform {
-          0%, 100% { height: 4px; }
-          50% { height: 24px; }
+        @keyframes ripple {
+          0% { transform: scale(1); opacity: 0.4; }
+          100% { transform: scale(2.5); opacity: 0; }
         }
-        .animate-waveform {
-          animation: waveform 0.8s ease-in-out infinite;
+        .orb-active { animation: orbPulse 1.2s ease-in-out infinite; }
+        .orb-idle { animation: orbBreath 3s ease-in-out infinite; }
+        .ripple-ring {
+          animation: ripple 1.5s ease-out infinite;
+          border: 2px solid currentColor;
+          border-radius: 50%;
+          position: absolute;
+          inset: 0;
         }
       `}</style>
 
-      {/* --- Top bar --- */}
-      <div className="flex items-center justify-between px-4 py-3 safe-top">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-gray-400 hover:text-white hover:bg-white/10"
-          onClick={() => navigate(ROUTES.OVERVIEW)}
+      {/* Agent picker - top */}
+      <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10">
+        <button
+          onClick={() => setShowAgentPicker(!showAgentPicker)}
+          className="flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm text-white/80 backdrop-blur-sm hover:bg-white/15 transition-colors"
         >
-          <ArrowLeft className="size-5" />
-        </Button>
-
-        <h1 className="text-sm font-medium text-gray-400 tracking-wider uppercase">
-          {t("title")}
-        </h1>
-
-        <Select value={selectedAgentId} onValueChange={setSelectedAgentId}>
-          <SelectTrigger className="w-auto min-w-[120px] bg-white/5 border-white/10 text-gray-300 text-base md:text-sm">
-            <SelectValue placeholder={t("selectAgent")} />
-          </SelectTrigger>
-          <SelectContent>
+          <span>{agentName}</span>
+          <ChevronDown className="h-4 w-4" />
+        </button>
+        {showAgentPicker && (
+          <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 min-w-48 rounded-xl bg-zinc-800/95 border border-white/10 backdrop-blur-md shadow-xl overflow-hidden">
             {agents.map((agent) => (
-              <SelectItem key={agent.id} value={agent.id}>
-                <div className="flex items-center gap-2">
-                  <Bot className="size-3.5 text-purple-400" />
-                  {agent.name}
-                </div>
-              </SelectItem>
+              <button
+                key={agent.id}
+                onClick={() => {
+                  setSelectedAgent(agent.id);
+                  setShowAgentPicker(false);
+                }}
+                className={`w-full px-4 py-3 text-left text-sm transition-colors hover:bg-white/10 ${
+                  agent.id === selectedAgent ? "text-purple-400 bg-white/5" : "text-white/70"
+                }`}
+              >
+                {agent.display_name || agent.agent_key}
+              </button>
             ))}
-            {agents.length === 0 && (
-              <SelectItem value="default" disabled>
-                {t("noAgents")}
-              </SelectItem>
-            )}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* --- Main content --- */}
-      <div className="flex-1 flex flex-col items-center justify-center gap-6 px-4 min-h-0">
-        {/* Orb */}
-        <VoiceOrb status={status} />
-
-        {/* Status */}
-        <StatusText status={status} t={t} />
-
-        {/* Current transcript (while listening/thinking) */}
-        {currentTranscript && (status === "listening" || status === "thinking") && (
-          <div className="max-w-md text-center">
-            <p className="text-sm text-gray-400 italic">
-              &ldquo;{currentTranscript}&rdquo;
-            </p>
-          </div>
-        )}
-
-        {/* Streaming response (while thinking) */}
-        {streamingResponse && status === "thinking" && (
-          <div className="max-w-md text-center">
-            <p className="text-sm text-blue-300/80 line-clamp-3">
-              {streamingResponse}
-            </p>
-          </div>
-        )}
-
-        {/* Error */}
-        {error && (
-          <div className="max-w-md text-center">
-            <p className="text-sm text-red-400">{error}</p>
           </div>
         )}
       </div>
 
-      {/* --- Conversation history --- */}
-      {conversation.length > 0 && (
-        <div className="mx-4 mb-2 max-h-[30vh]">
-          <div className="flex items-center justify-between mb-2 px-1">
-            <span className="text-xs text-gray-500 uppercase tracking-wider">
-              {t("conversation")}
-            </span>
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              className="text-gray-500 hover:text-red-400 hover:bg-white/5"
-              onClick={clearConversation}
-            >
-              <Trash2 className="size-3" />
-            </Button>
-          </div>
-          <ScrollArea className="h-full max-h-[25vh] rounded-xl bg-white/5 p-3">
-            {conversation.map((entry, i) => (
-              <ConversationBubble key={i} entry={entry} />
-            ))}
-            {/* Streaming response in conversation area */}
-            {streamingResponse && (status === "thinking" || status === "speaking") && (
-              <div className="flex justify-start mb-3">
-                <div className="max-w-[80%] rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed bg-white/10 text-gray-200">
-                  {streamingResponse}
-                  {status === "thinking" && (
-                    <span className="inline-block w-1.5 h-4 bg-blue-400 ml-0.5 animate-pulse" />
-                  )}
-                </div>
-              </div>
-            )}
-            <div ref={scrollEndRef} />
-          </ScrollArea>
+      {/* Orb */}
+      <div className="relative flex items-center justify-center">
+        {/* Ripple rings when listening */}
+        {state === "listening" && (
+          <>
+            <div className="ripple-ring text-purple-500" style={{ animationDelay: "0s" }} />
+            <div className="ripple-ring text-purple-500" style={{ animationDelay: "0.5s" }} />
+            <div className="ripple-ring text-purple-500" style={{ animationDelay: "1s" }} />
+          </>
+        )}
+
+        {/* Main orb */}
+        <div
+          className={`relative h-48 w-48 rounded-full cursor-pointer transition-all duration-500 ${
+            isActive ? "orb-active" : "orb-idle"
+          }`}
+          style={{
+            background: `radial-gradient(circle at 35% 35%, ${ORB_COLORS[state]}, transparent 70%)`,
+            boxShadow: ORB_GLOW[state],
+          }}
+          onClick={toggleMic}
+        >
+          {/* Inner glow */}
+          <div
+            className="absolute inset-4 rounded-full transition-all duration-500"
+            style={{
+              background: `radial-gradient(circle at 40% 40%, ${ORB_COLORS[state].replace("0.", "0.4")}, transparent 60%)`,
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Status text */}
+      <p className="mt-8 text-lg font-light text-white/70 transition-all duration-300">
+        {statusTexts![state]}
+      </p>
+
+      {/* Mic button */}
+      <button
+        onClick={toggleMic}
+        disabled={state === "thinking"}
+        className={`mt-8 flex h-16 w-16 items-center justify-center rounded-full transition-all duration-300 ${
+          state === "listening"
+            ? "bg-red-500 hover:bg-red-600 scale-110"
+            : state === "thinking"
+            ? "bg-blue-500/50 cursor-not-allowed"
+            : state === "speaking"
+            ? "bg-green-500 hover:bg-green-600"
+            : "bg-white/10 hover:bg-white/20"
+        }`}
+      >
+        {state === "listening" ? (
+          <MicOff className="h-7 w-7 text-white" />
+        ) : (
+          <Mic className="h-7 w-7 text-white" />
+        )}
+      </button>
+
+      {/* Hint */}
+      <p className="mt-4 text-xs text-white/30">
+        {lang === "pt-BR" ? "Pressione espaço ou toque na orb" : "Press space or tap the orb"}
+      </p>
+
+      {/* Browser support warning */}
+      {!recognition.supported && (
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-lg bg-red-500/20 px-4 py-2 text-sm text-red-300 backdrop-blur-sm">
+          {lang === "pt-BR"
+            ? "Seu navegador não suporta reconhecimento de voz. Use Chrome ou Edge."
+            : "Your browser doesn't support speech recognition. Use Chrome or Edge."}
         </div>
       )}
-
-      {/* --- Bottom controls --- */}
-      <div className="flex flex-col items-center gap-3 px-4 pb-6 pt-2 safe-bottom">
-        {/* Mic button */}
-        <button
-          onClick={handleMicPress}
-          className={`relative size-16 rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 ${
-            status === "listening"
-              ? "bg-red-500 hover:bg-red-600 shadow-lg shadow-red-500/30 scale-110"
-              : status === "thinking" || status === "speaking"
-                ? "bg-gray-600 hover:bg-gray-500 shadow-lg"
-                : "bg-purple-600 hover:bg-purple-500 shadow-lg shadow-purple-500/30"
-          }`}
-        >
-          {status === "listening" ? (
-            <MicOff className="size-7 text-white" />
-          ) : (
-            <Mic className="size-7 text-white" />
-          )}
-
-          {/* Recording ring animation */}
-          {status === "listening" && (
-            <span className="absolute inset-0 rounded-full border-2 border-red-400 animate-ping opacity-50" />
-          )}
-        </button>
-
-        {/* Hint text */}
-        <p className="text-xs text-gray-500">
-          {micButtonLabel}
-          <span className="hidden sm:inline"> &middot; {t("spaceHint")}</span>
-        </p>
-      </div>
     </div>
   );
 }
