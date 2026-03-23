@@ -17,7 +17,7 @@ import { slugify, isValidSlug } from "@/lib/slug";
 import type { ProviderData } from "@/types/provider";
 import type { AgentData } from "@/types/agent";
 
-const DEFAULT_PROMPT = `You are GoClaw, my helpful assistant. I am your boss, NextLevelBuilder.`;
+const DEFAULT_PROMPT = `You are FocosIA, my helpful assistant. I am your boss, NextLevelBuilder.`;
 
 interface StepAgentProps {
   provider: ProviderData | null;
@@ -34,8 +34,8 @@ export function StepAgent({ provider, model, onComplete, onBack, existingAgent }
 
   const isEditing = !!existingAgent;
 
-  const [displayName, setDisplayName] = useState(existingAgent?.display_name ?? "GoClaw");
-  const [agentKey, setAgentKey] = useState(existingAgent?.agent_key ?? "goclaw");
+  const [displayName, setDisplayName] = useState(existingAgent?.display_name ?? "FocosIA");
+  const [agentKey, setAgentKey] = useState(existingAgent?.agent_key ?? "focosia");
   const [keyTouched, setKeyTouched] = useState(isEditing);
   const [description, setDescription] = useState(
     existingAgent?.other_config?.description as string ?? DEFAULT_PROMPT,
@@ -181,7 +181,7 @@ export function StepAgent({ provider, model, onComplete, onBack, existingAgent }
                 <Input
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder={t("agent.displayNamePlaceholder", "e.g. GoClaw")}
+                  placeholder={t("agent.displayNamePlaceholder", "e.g. FocosIA")}
                 />
               </div>
               <div className="space-y-2">

@@ -61,7 +61,7 @@ export function Sidebar({ collapsed, onNavItemClick }: SidebarProps) {
       <div className="flex h-14 items-center border-b px-4">
         {!collapsed && (
           <span className="text-base font-semibold tracking-tight">
-            GoClaw
+            FocosIA
           </span>
         )}
         {collapsed && (

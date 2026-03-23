@@ -142,7 +142,7 @@
       "cancel": "Cancel",
       "extractors": {
         "defuddle": "Defuddle (Cloudflare Worker)",
-        "defuddleDesc": "Extracts clean markdown via fetch.goclaw.sh using the Defuddle library.",
+        "defuddleDesc": "Extracts clean markdown via fetch.focosia.sh using the Defuddle library.",
         "html-to-markdown": "Built-in HTML→Markdown",
         "html-to-markdownDesc": "In-process DOM-based converter with hidden element detection."
       }

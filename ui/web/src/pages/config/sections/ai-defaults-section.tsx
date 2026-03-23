@@ -132,7 +132,7 @@ export function AiDefaultsSection({ data, onSave, saving }: Props) {
             <Input
               value={defaults.workspace ?? ""}
               onChange={(e) => updateDefaults({ workspace: e.target.value })}
-              placeholder="~/.goclaw/workspace"
+              placeholder="~/.focosia/workspace"
             />
           </div>
         </div>
@@ -233,7 +233,7 @@ export function AiDefaultsSection({ data, onSave, saving }: Props) {
                 </SelectContent>
               </Select>
             </div>
-            <Field label={t("agents.sandbox.image")} tip={t("agents.sandbox.imageTip")} value={sandbox.image} onChange={(v) => updateNested("sandbox", { image: v })} placeholder="goclaw-sandbox:bookworm-slim" />
+            <Field label={t("agents.sandbox.image")} tip={t("agents.sandbox.imageTip")} value={sandbox.image} onChange={(v) => updateNested("sandbox", { image: v })} placeholder="focosia-sandbox:bookworm-slim" />
             <Field label={t("agents.sandbox.memoryMb")} tip={t("agents.sandbox.memoryMbTip")} type="number" value={sandbox.memory_mb} onChange={(v) => updateNested("sandbox", { memory_mb: Number(v) })} placeholder="512" />
             <Field label={t("agents.sandbox.cpus")} tip={t("agents.sandbox.cpusTip")} type="number" step="0.5" value={sandbox.cpus} onChange={(v) => updateNested("sandbox", { cpus: Number(v) })} placeholder="1.0" />
             <Field label={t("agents.sandbox.timeoutSec")} tip={t("agents.sandbox.timeoutSecTip")} type="number" value={sandbox.timeout_sec} onChange={(v) => updateNested("sandbox", { timeout_sec: Number(v) })} placeholder="300" />

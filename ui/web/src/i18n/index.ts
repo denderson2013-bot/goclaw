@@ -103,7 +103,7 @@ import zhApiKeys from "./locales/zh/api-keys.json";
 import zhCliCredentials from "./locales/zh/cli-credentials.json";
 import zhPackages from "./locales/zh/packages.json";
 
-const STORAGE_KEY = "goclaw:language";
+const STORAGE_KEY = "focosia:language";
 
 function getInitialLanguage(): string {
   const stored = localStorage.getItem(STORAGE_KEY);

@@ -90,7 +90,7 @@ export function TelemetrySection({ data, onSave, saving }: Props) {
             <Input
               value={draft.service_name ?? ""}
               onChange={(e) => update({ service_name: e.target.value })}
-              placeholder="goclaw-gateway"
+              placeholder="focosia-gateway"
             />
           </div>
           <div className="flex items-center justify-between">
