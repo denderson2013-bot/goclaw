@@ -123,6 +123,9 @@ func (c *Config) applyEnvOverrides() {
 	envStr("GOCLAW_LARK_ENCRYPT_KEY", &c.Channels.Feishu.EncryptKey)
 	envStr("GOCLAW_LARK_VERIFICATION_TOKEN", &c.Channels.Feishu.VerificationToken)
 	envStr("GOCLAW_WHATSAPP_BRIDGE_URL", &c.Channels.WhatsApp.BridgeURL)
+	envStr("GOCLAW_WAHA_BASE_URL", &c.Channels.Waha.BaseURL)
+	envStr("GOCLAW_WAHA_API_KEY", &c.Channels.Waha.ApiKey)
+	envStr("GOCLAW_WAHA_SESSION", &c.Channels.Waha.Session)
 	envStr("GOCLAW_SLACK_BOT_TOKEN", &c.Channels.Slack.BotToken)
 	envStr("GOCLAW_SLACK_APP_TOKEN", &c.Channels.Slack.AppToken)
 	envStr("GOCLAW_SLACK_USER_TOKEN", &c.Channels.Slack.UserToken)
@@ -148,6 +151,9 @@ func (c *Config) applyEnvOverrides() {
 	}
 	if c.Channels.WhatsApp.BridgeURL != "" {
 		c.Channels.WhatsApp.Enabled = true
+	}
+	if c.Channels.Waha.BaseURL != "" {
+		c.Channels.Waha.Enabled = true
 	}
 	if c.Channels.Slack.BotToken != "" && c.Channels.Slack.AppToken != "" {
 		c.Channels.Slack.Enabled = true

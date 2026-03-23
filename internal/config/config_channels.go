@@ -20,6 +20,7 @@ type ChannelsConfig struct {
 	Zalo              ZaloConfig               `json:"zalo"`
 	ZaloPersonal      ZaloPersonalConfig       `json:"zalo_personal"`
 	Feishu            FeishuConfig             `json:"feishu"`
+	Waha              WahaConfig               `json:"waha"`
 	PendingCompaction *PendingCompactionConfig `json:"pending_compaction,omitempty"` // global pending message compaction settings
 }
 
@@ -187,6 +188,18 @@ type FeishuConfig struct {
 	STTTenantID       string              `json:"stt_tenant_id,omitempty"`
 	STTTimeoutSeconds int                 `json:"stt_timeout_seconds,omitempty"`
 	VoiceAgentID      string              `json:"voice_agent_id,omitempty"`
+}
+
+type WahaConfig struct {
+	Enabled     bool                `json:"enabled"`
+	BaseURL     string              `json:"base_url"`
+	ApiKey      string              `json:"api_key"`
+	Session     string              `json:"session"`
+	AllowFrom   FlexibleStringSlice `json:"allow_from"`
+	DMPolicy    string              `json:"dm_policy,omitempty"`
+	GroupPolicy string              `json:"group_policy,omitempty"`
+	BlockReply  *bool               `json:"block_reply,omitempty"`
+	WebhookPath string              `json:"webhook_path,omitempty"`
 }
 
 // ProvidersConfig maps provider name to its config.
