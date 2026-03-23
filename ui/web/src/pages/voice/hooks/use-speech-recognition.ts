@@ -1,32 +1,19 @@
 import { useState, useRef, useCallback } from "react";
 
-interface SpeechRecognitionEvent {
-  results: SpeechRecognitionResultList;
-  resultIndex: number;
-}
-
-interface SpeechRecognitionErrorEvent {
-  error: string;
-}
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type SpeechRecognitionInstance = {
   continuous: boolean;
   interimResults: boolean;
   lang: string;
-  onresult: ((e: SpeechRecognitionEvent) => void) | null;
-  onerror: ((e: SpeechRecognitionErrorEvent) => void) | null;
+  onresult: ((e: any) => void) | null;
+  onerror: ((e: any) => void) | null;
   onend: (() => void) | null;
   start: () => void;
   stop: () => void;
   abort: () => void;
 };
 
-declare global {
-  interface Window {
-    SpeechRecognition?: new () => SpeechRecognitionInstance;
-    webkitSpeechRecognition?: new () => SpeechRecognitionInstance;
-  }
-}
+// SpeechRecognition accessed via window["SpeechRecognition"] to avoid type conflicts
 
 export function useSpeechRecognition(lang = "pt-BR") {
   const [isListening, setIsListening] = useState(false);
@@ -35,13 +22,13 @@ export function useSpeechRecognition(lang = "pt-BR") {
 
   const supported =
     typeof window !== "undefined" &&
-    !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+    !!((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition);
 
   const start = useCallback(
     (onResult: (text: string) => void) => {
       if (!supported) return;
 
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (!SR) return;
 
       const recognition = new SR();
@@ -51,10 +38,11 @@ export function useSpeechRecognition(lang = "pt-BR") {
 
       onResultRef.current = onResult;
 
-      recognition.onresult = (e: SpeechRecognitionEvent) => {
-        const last = e.results[e.results.length - 1];
-        if (last?.[0]) {
-          const text = last[0].transcript?.trim();
+      recognition.onresult = (e: any) => {
+        const idx = e.results.length - 1;
+        const result = e.results[idx];
+        if (result?.[0]) {
+          const text = result[0].transcript?.trim();
           if (text && onResultRef.current) {
             onResultRef.current(text);
           }
