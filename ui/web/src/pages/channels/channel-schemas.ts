@@ -64,6 +64,11 @@ export const credentialsSchema: Record<string, FieldDef[]> = {
   whatsapp: [
     { key: "bridge_url", label: "Bridge URL", type: "text", required: true, placeholder: "http://bridge:3000" },
   ],
+  waha: [
+    { key: "base_url", label: "WAHA URL", type: "text", required: true, placeholder: "https://waha.seuservidor.com", help: "URL base da sua instância WAHA" },
+    { key: "api_key", label: "API Key", type: "password", required: true, placeholder: "sua-api-key", help: "X-Api-Key da WAHA" },
+    { key: "session", label: "Session", type: "text", required: true, placeholder: "default", help: "Nome da sessão WAHA" },
+  ],
 };
 
 // --- Config schemas ---
@@ -145,6 +150,13 @@ export const configSchema: Record<string, FieldDef[]> = {
     { key: "group_policy", label: "Group Policy", type: "select", options: groupPolicyOptions, defaultValue: "pairing" },
     { key: "allow_from", label: "Allowed Users", type: "tags", help: "WhatsApp user IDs" },
     { key: "block_reply", label: "Block Reply", type: "select", options: blockReplyOptions, defaultValue: "inherit", help: "Deliver intermediate text during tool iterations" },
+  ],
+  waha: [
+    { key: "dm_policy", label: "Política DM", type: "select", options: dmPolicyOptions, defaultValue: "open", help: "Como tratar mensagens diretas" },
+    { key: "group_policy", label: "Política de Grupos", type: "select", options: groupPolicyOptions, defaultValue: "open", help: "Como tratar mensagens de grupos" },
+    { key: "allow_from", label: "Usuários Permitidos", type: "tags", help: "Números WhatsApp (ex: 5511999999999)" },
+    { key: "webhook_path", label: "Webhook Path", type: "text", defaultValue: "/webhook/waha", help: "Caminho do webhook (configurar na WAHA)" },
+    { key: "block_reply", label: "Block Reply", type: "select", options: blockReplyOptions, defaultValue: "inherit", help: "Enviar texto intermediário durante iterações de ferramentas" },
   ],
 };
 
