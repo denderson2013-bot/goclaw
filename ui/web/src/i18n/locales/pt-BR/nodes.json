@@ -1,0 +1,35 @@
+{
+  "title": "Dispositivos",
+  "description": "Gerencie dispositivos pareados e solicitações de pareamento pendentes",
+  "emptyTitle": "Nenhum dispositivo",
+  "emptyDescription": "Nenhum dispositivo pareado ou solicitação de pareamento pendente.",
+  "pendingRequests": "Solicitações Pendentes ({{count}})",
+  "pairedDevices": "Dispositivos Pareados ({{count}})",
+  "sender": "Remetente:",
+  "chat": "Chat:",
+  "columns": {
+    "channel": "Canal",
+    "senderId": "ID do Remetente",
+    "paired": "Pareado",
+    "by": "Por",
+    "actions": "Ações"
+  },
+  "approve": "Aprovar",
+  "deny": "Negar",
+  "revoke": "Revogar",
+  "confirmApprove": {
+    "title": "Aprovar Pareamento",
+    "description": "Aprovar solicitação de pareamento de {{channel}}:{{senderId}} (código: {{code}})? Este dispositivo poderá interagir com os agentes.",
+    "confirmLabel": "Aprovar"
+  },
+  "confirmDeny": {
+    "title": "Negar Pareamento",
+    "description": "Negar solicitação de pareamento de {{channel}}:{{senderId}} (código: {{code}})? A solicitação será removida.",
+    "confirmLabel": "Negar"
+  },
+  "confirmRevoke": {
+    "title": "Revogar Dispositivo",
+    "description": "Revogar pareamento de {{channel}}:{{senderId}}? O dispositivo precisará parear novamente.",
+    "confirmLabel": "Revogar"
+  }
+}

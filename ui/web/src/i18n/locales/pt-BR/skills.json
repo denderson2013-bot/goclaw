@@ -1,0 +1,112 @@
+{
+  "title": "Habilidades",
+  "description": "Gerencie habilidades e capacidades dos agentes",
+  "searchPlaceholder": "Buscar habilidades...",
+  "emptyTitle": "Nenhuma habilidade",
+  "emptyDescription": "Nenhuma habilidade foi registrada ainda.",
+  "noMatchTitle": "Nenhuma habilidade encontrada",
+  "noMatchDescription": "Tente um termo de busca diferente.",
+  "columns": {
+    "name": "Nome",
+    "description": "Descrição",
+    "source": "Origem",
+    "author": "Autor",
+    "visibility": "Visibilidade",
+    "status": "Status",
+    "actions": "Ações"
+  },
+  "noDescription": "Sem descrição",
+  "visibility": {
+    "clickToCycle": "Clique para alterar a visibilidade"
+  },
+  "delete": {
+    "title": "Excluir Habilidade",
+    "description": "Tem certeza que deseja excluir \"{{name}}\"? Esta ação não pode ser desfeita.",
+    "confirmLabel": "Excluir"
+  },
+  "upload": {
+    "title": "Enviar Habilidades",
+    "description": "Envie arquivos ZIP contendo SKILL.md com frontmatter YAML (name, description, slug).",
+    "button": "Enviar",
+    "uploading": "Enviando...",
+    "dropOrClick": "Clique ou arraste e solte arquivos .zip",
+    "dropHere": "Solte os arquivos .zip aqui",
+    "onlyZip": "Apenas arquivos .zip são aceitos",
+    "cancel": "Cancelar",
+    "done": "Pronto",
+    "tooLarge": "O arquivo excede o limite de 20MB",
+    "invalidZip": "Arquivo ZIP inválido",
+    "noSkillMd": "O ZIP deve conter SKILL.md na raiz",
+    "emptySkillMd": "SKILL.md está vazio",
+    "noFrontmatter": "SKILL.md sem frontmatter YAML",
+    "nameRequired": "name é obrigatório no frontmatter do SKILL.md",
+    "invalidSlug": "Formato de slug inválido",
+    "failed": "Falha no envio",
+    "validating": "Validando...",
+    "validCount": "{{valid}} de {{total}} válidos",
+    "uploadCount": "Enviar ({{count}})",
+    "successCount": "{{success}} de {{total}} enviados com sucesso",
+    "remove": "Remover arquivo"
+  },
+  "edit": {
+    "title": "Editar Habilidade",
+    "name": "Nome",
+    "description": "Descrição",
+    "visibility": "Visibilidade",
+    "tags": "Tags",
+    "addTag": "Adicionar tag...",
+    "add": "Adicionar",
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "saving": "Salvando...",
+    "privateOption": "Privada (apenas o dono)",
+    "internalOption": "Interna (agentes/usuários autorizados)",
+    "publicOption": "Pública (todos os agentes)"
+  },
+  "system": "Sistema",
+  "tabs": {
+    "core": "Principal",
+    "custom": "Personalizada"
+  },
+  "toggle": {
+    "enable": "Ativar habilidade",
+    "disable": "Desativar habilidade",
+    "disabled": "Desativada"
+  },
+  "deps": {
+    "rescan": "Reescanear Deps",
+    "rescanning": "Escaneando...",
+    "rescanSuccess": "{{count}} habilidades atualizadas",
+    "missing": "Faltando: {{deps}}",
+    "install": "Instalar Dependências",
+    "installing": "Instalando...",
+    "installSuccess": "Dependências instaladas com sucesso",
+    "installPartial": "Algumas dependências falharam ao instalar",
+    "installItem": "Instalar",
+    "itemSuccess": "Instalado",
+    "itemError": "Falhou",
+    "missingTitle": "Dependências Ausentes",
+    "systemLabel": "Sistema",
+    "pythonLabel": "Python",
+    "nodeLabel": "Node.js",
+    "statusActive": "Ativa",
+    "statusArchived": "Deps ausentes",
+    "runtimeMissing": "Pré-requisitos de Runtime Ausentes",
+    "runtimeMissingDesc": "As habilidades principais requerem runtimes Python e/ou Node.js. Reconstrua com ENABLE_PYTHON=true, ENABLE_NODE=true ou ENABLE_FULL_SKILLS=true, ou instale manualmente.",
+    "runtimeRequired": "Instale os runtimes primeiro"
+  },
+  "detail": {
+    "title": "Detalhes da Habilidade",
+    "content": "Conteúdo",
+    "files": "Arquivos",
+    "version": "Versão:",
+    "current": "(atual)",
+    "noContent": "Nenhum conteúdo disponível."
+  },
+  "toast": {
+    "updated": "Habilidade atualizada",
+    "updateFailed": "Falha ao atualizar habilidade",
+    "deleted": "Habilidade excluída",
+    "deleteFailed": "Falha ao excluir habilidade"
+  }
+}

@@ -103,12 +103,47 @@ import zhApiKeys from "./locales/zh/api-keys.json";
 import zhCliCredentials from "./locales/zh/cli-credentials.json";
 import zhPackages from "./locales/zh/packages.json";
 
+// --- PT-BR namespaces ---
+import ptBrCommon from "./locales/pt-BR/common.json";
+import ptBrSidebar from "./locales/pt-BR/sidebar.json";
+import ptBrTopbar from "./locales/pt-BR/topbar.json";
+import ptBrLogin from "./locales/pt-BR/login.json";
+import ptBrOverview from "./locales/pt-BR/overview.json";
+import ptBrChat from "./locales/pt-BR/chat.json";
+import ptBrAgents from "./locales/pt-BR/agents.json";
+import ptBrTeams from "./locales/pt-BR/teams.json";
+import ptBrSessions from "./locales/pt-BR/sessions.json";
+import ptBrSkills from "./locales/pt-BR/skills.json";
+import ptBrCron from "./locales/pt-BR/cron.json";
+import ptBrConfig from "./locales/pt-BR/config.json";
+import ptBrChannels from "./locales/pt-BR/channels.json";
+import ptBrProviders from "./locales/pt-BR/providers.json";
+import ptBrTraces from "./locales/pt-BR/traces.json";
+import ptBrEvents from "./locales/pt-BR/events.json";
+import ptBrUsage from "./locales/pt-BR/usage.json";
+import ptBrApprovals from "./locales/pt-BR/approvals.json";
+import ptBrNodes from "./locales/pt-BR/nodes.json";
+import ptBrLogs from "./locales/pt-BR/logs.json";
+import ptBrTools from "./locales/pt-BR/tools.json";
+import ptBrMcp from "./locales/pt-BR/mcp.json";
+import ptBrTts from "./locales/pt-BR/tts.json";
+import ptBrSetup from "./locales/pt-BR/setup.json";
+import ptBrMemory from "./locales/pt-BR/memory.json";
+import ptBrStorage from "./locales/pt-BR/storage.json";
+import ptBrPendingMessages from "./locales/pt-BR/pending-messages.json";
+import ptBrContacts from "./locales/pt-BR/contacts.json";
+import ptBrActivity from "./locales/pt-BR/activity.json";
+import ptBrApiKeys from "./locales/pt-BR/api-keys.json";
+import ptBrCliCredentials from "./locales/pt-BR/cli-credentials.json";
+import ptBrPackages from "./locales/pt-BR/packages.json";
+
 const STORAGE_KEY = "focosia:language";
 
 function getInitialLanguage(): string {
   const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored === "en" || stored === "vi" || stored === "zh") return stored;
+  if (stored === "en" || stored === "vi" || stored === "zh" || stored === "pt-BR") return stored;
   const lang = navigator.language.toLowerCase();
+  if (lang.startsWith("pt")) return "pt-BR";
   if (lang.startsWith("vi")) return "vi";
   if (lang.startsWith("zh")) return "zh";
   return "en";
@@ -163,6 +198,19 @@ i18n.use(initReactI18next).init({
       contacts: zhContacts, activity: zhActivity, "api-keys": zhApiKeys,
       "cli-credentials": zhCliCredentials,
       packages: zhPackages,
+    },
+    "pt-BR": {
+      common: ptBrCommon, sidebar: ptBrSidebar, topbar: ptBrTopbar, login: ptBrLogin,
+      overview: ptBrOverview, chat: ptBrChat, agents: ptBrAgents, teams: ptBrTeams,
+      sessions: ptBrSessions, skills: ptBrSkills, cron: ptBrCron, config: ptBrConfig,
+      channels: ptBrChannels, providers: ptBrProviders, traces: ptBrTraces,
+      events: ptBrEvents, usage: ptBrUsage,
+      approvals: ptBrApprovals, nodes: ptBrNodes, logs: ptBrLogs, tools: ptBrTools,
+      mcp: ptBrMcp, tts: ptBrTts, setup: ptBrSetup, memory: ptBrMemory, storage: ptBrStorage,
+      "pending-messages": ptBrPendingMessages,
+      contacts: ptBrContacts, activity: ptBrActivity, "api-keys": ptBrApiKeys,
+      "cli-credentials": ptBrCliCredentials,
+      packages: ptBrPackages,
     },
   },
   ns: [...ns],

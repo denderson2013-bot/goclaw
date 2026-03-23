@@ -1,0 +1,190 @@
+{
+  "title": "Memória",
+  "description": "Navegue e gerencie documentos de memória, chunks e embeddings dos agentes",
+  "search": "Buscar",
+  "create": "Criar",
+  "indexAll": "Indexar Tudo",
+  "indexing": "Indexando...",
+  "emptyTitle": "Nenhum documento de memória",
+  "emptyAgentDescription": "Este agente ainda não possui documentos de memória.",
+  "emptyGlobalDescription": "Nenhum documento de memória encontrado em nenhum agente.",
+  "filters": {
+    "agent": "Agente",
+    "allAgents": "Todos os agentes",
+    "scope": "Escopo",
+    "allScope": "Todos (global + pessoal)",
+    "selectAgent": "Selecione um agente"
+  },
+  "tabs": {
+    "documents": "Documentos",
+    "knowledgeGraph": "Grafo de Conhecimento"
+  },
+  "columns": {
+    "path": "Caminho",
+    "agent": "Agente",
+    "scope": "Escopo",
+    "hash": "Hash",
+    "updated": "Atualizado",
+    "actions": "Ações"
+  },
+  "scopeLabel": {
+    "personal": "Pessoal",
+    "global": "Global"
+  },
+  "delete": {
+    "title": "Excluir Documento de Memória",
+    "description": "Tem certeza que deseja excluir \"{{path}}\"? Isso também excluirá todos os chunks e embeddings associados.",
+    "confirmLabel": "Excluir"
+  },
+  "createDialog": {
+    "title": "Criar Documento de Memória",
+    "path": "Caminho *",
+    "pathPlaceholder": "ex. notas/visao-geral-projeto.md",
+    "content": "Conteúdo *",
+    "contentPlaceholder": "Conteúdo do documento...",
+    "agentId": "Agente *",
+    "agentIdPlaceholder": "Selecionar agente...",
+    "scope": "Escopo",
+    "existingScope": "Escopo existente",
+    "customScope": "Personalizado",
+    "selectGroupUser": "Selecionar grupo/usuário...",
+    "scopeHint": "Global = compartilhado entre todos os usuários. Pessoal = limitado a um usuário ou grupo de chat específico.",
+    "autoIndex": "Indexar automaticamente após criação",
+    "agentRequired": "Por favor, selecione um agente",
+    "pathRequired": "O caminho é obrigatório",
+    "contentRequired": "O conteúdo é obrigatório",
+    "cancel": "Cancelar",
+    "create": "Criar",
+    "creating": "Criando..."
+  },
+  "documentDialog": {
+    "title": "Documento de Memória",
+    "path": "Caminho:",
+    "agent": "Agente:",
+    "scope": "Escopo:",
+    "hash": "Hash:",
+    "updated": "Atualizado:",
+    "content": "Conteúdo",
+    "chunks": "Chunks ({{count}})",
+    "chunkIndex": "Chunk {{index}}",
+    "noChunks": "Nenhum chunk",
+    "embedded": "Incorporado",
+    "noEmbedding": "Sem embedding"
+  },
+  "searchDialog": {
+    "title": "Buscar na Memória",
+    "query": "Consulta de Busca",
+    "queryPlaceholder": "Digite a consulta de busca...",
+    "agentId": "ID do Agente",
+    "agentIdPlaceholder": "Filtrar por agente...",
+    "limit": "Limite",
+    "search": "Buscar",
+    "searching": "Buscando...",
+    "results": "Resultados",
+    "noResults": "Nenhum resultado encontrado",
+    "similarity": "similaridade",
+    "path": "Caminho:"
+  },
+  "kg": {
+    "pageTitle": "Grafo de Conhecimento",
+    "pageDescription": "Explore entidades e relacionamentos extraídos da memória do agente.",
+    "selectAgentTitle": "Selecione um agente",
+    "selectAgentDescription": "Escolha um agente para visualizar seu grafo de conhecimento.",
+    "emptyTitle": "Nenhuma entidade",
+    "emptyDescription": "Nenhuma entidade no grafo de conhecimento para este agente ainda.",
+    "emptySearchDescription": "Nenhuma entidade corresponde à sua busca.",
+    "stats": {
+      "entities": "Entidades: {{count}}",
+      "relations": "Relações: {{count}}"
+    },
+    "search": {
+      "placeholder": "Buscar entidades...",
+      "button": "Buscar",
+      "clear": "Limpar"
+    },
+    "refresh": "Atualizar",
+    "extract": "Extrair",
+    "columns": {
+      "name": "Nome",
+      "type": "Tipo",
+      "description": "Descrição",
+      "confidence": "Confiança",
+      "actions": "Ações",
+      "observations": "Observações",
+      "relations": "Relações"
+    },
+    "deleteEntity": {
+      "title": "Excluir Entidade",
+      "description": "Excluir \"{{name}}\"? Isso também excluirá todas as relações associadas.",
+      "confirmLabel": "Excluir"
+    },
+    "entity": {
+      "externalId": "ID Externo:",
+      "confidence": "Confiança:",
+      "description": "Descrição:",
+      "source": "Origem:",
+      "properties": "Propriedades:",
+      "relations": "Relações",
+      "traverse": "Percorrer (2 saltos)",
+      "traversing": "Percorrendo...",
+      "loading": "Carregando...",
+      "noRelations": "Nenhuma relação encontrada.",
+      "traversalResults": "Resultados da Travessia ({{count}})",
+      "direction": {
+        "outgoing": "→ saída",
+        "incoming": "← entrada"
+      },
+      "columns": {
+        "direction": "Direção",
+        "relation": "Relação",
+        "target": "Destino",
+        "confidence": "Confiança"
+      }
+    },
+    "extractDialog": {
+      "title": "Extrair Entidades do Texto",
+      "providerLabel": "Provedor de Extração",
+      "modelLabel": "Modelo de Extração",
+      "textLabel": "Texto para extrair",
+      "textPlaceholder": "Cole texto de conversa, notas ou qualquer conteúdo para extrair entidades e relações...",
+      "extract": "Extrair",
+      "extracting": "Extraindo...",
+      "cancel": "Cancelar",
+      "agentId": "ID do Agente",
+      "agentIdPlaceholder": "Deixe em branco para global"
+    },
+    "graphView": {
+      "loading": "Carregando grafo...",
+      "empty": "Nenhuma entidade para visualizar",
+      "nodes": "{{count}} nós",
+      "edges": "{{count}} arestas"
+    }
+  },
+  "toast": {
+    "created": "Documento de memória criado",
+    "deleted": "Documento de memória excluído",
+    "indexed": "Todos os documentos indexados",
+    "failedCreate": "Falha ao criar documento",
+    "failedDelete": "Falha ao excluir documento",
+    "failedIndex": "Falha ao indexar documentos",
+    "entitySaved": "Entidade salva",
+    "entitySaveFailed": "Falha ao salvar entidade",
+    "entityDeleted": "Entidade excluída",
+    "entityDeleteFailed": "Falha ao excluir entidade",
+    "extractionComplete": "Extração concluída",
+    "extractionFailed": "Falha na extração",
+    "traversalFailed": "Falha na travessia",
+    "unknownError": "Erro desconhecido",
+    "docCreated": "Documento criado",
+    "docCreateFailed": "Falha ao criar documento",
+    "docUpdated": "Documento atualizado",
+    "docUpdateFailed": "Falha ao atualizar documento",
+    "docDeleted": "Documento excluído",
+    "docDeleteFailed": "Falha ao excluir documento",
+    "docIndexed": "Documento indexado",
+    "docIndexFailed": "Falha ao indexar documento",
+    "allIndexed": "Todos os documentos indexados",
+    "allIndexFailed": "Falha ao indexar todos",
+    "searchFailed": "Falha na busca"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "deleteChat": "Excluir conversa",
+  "deleteChatConfirm": "Isso excluirá permanentemente esta conversa e todas as suas mensagens.",
+  "newChat": "Nova Conversa",
+  "openSessions": "Abrir sessões",
+  "readOnly": "Somente leitura — esta sessão pertence a outro usuário",
+  "empty": {
+    "title": "Iniciar uma conversa",
+    "description": "Envie uma mensagem para começar a conversar com o agente."
+  },
+  "media": {
+    "image": "Imagem",
+    "video": "Vídeo",
+    "audio": "Áudio",
+    "voice": "Mensagem de voz",
+    "document": "Documento",
+    "animation": "Animação",
+    "attached": "anexado"
+  },
+  "forwardedFrom": "Encaminhado de",
+  "replyingTo": "Respondendo a"
+}

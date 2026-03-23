@@ -50,11 +50,12 @@ export const LOCAL_STORAGE_KEYS = {
   TIMEZONE: "focosia:timezone",
 } as const;
 
-export const SUPPORTED_LANGUAGES = ["en", "vi", "zh"] as const;
+export const SUPPORTED_LANGUAGES = ["en", "pt-BR", "vi", "zh"] as const;
 export type Language = (typeof SUPPORTED_LANGUAGES)[number];
 
 export const LANGUAGE_LABELS: Record<Language, string> = {
   en: "English",
+  "pt-BR": "Português (BR)",
   vi: "Tiếng Việt",
   zh: "中文",
 };

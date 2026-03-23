@@ -1,0 +1,21 @@
+{
+  "title": "Armazenamento",
+  "description": "Navegador de arquivos do workspace",
+  "descriptionWithPath": "{{path}} — {{size}}",
+  "sizeCacheInfo": "O tamanho do armazenamento é armazenado em cache por 60 minutos",
+  "unsupportedFile": "Este tipo de arquivo não é suportado para visualização",
+  "download": "Baixar",
+  "delete": {
+    "fileTitle": "Excluir arquivo",
+    "folderTitle": "Excluir pasta",
+    "description": "Tem certeza que deseja excluir {{name}}?",
+    "folderWarning": " Todo o conteúdo será removido recursivamente.",
+    "undone": " Esta ação não pode ser desfeita.",
+    "deleting": "Excluindo...",
+    "confirmLabel": "Excluir"
+  },
+  "toast": {
+    "deleted": "Arquivo excluído",
+    "deleteFailed": "Falha ao excluir arquivo"
+  }
+}

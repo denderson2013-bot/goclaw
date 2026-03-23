@@ -1,0 +1,32 @@
+{
+  "title": "Contatos",
+  "description": "Contatos coletados automaticamente de todas as interações nos canais.",
+  "searchPlaceholder": "Buscar por nome, usuário ou ID...",
+  "filter": "Filtrar",
+  "emptyTitle": "Nenhum contato",
+  "emptyDescription": "Os contatos aparecerão aqui conforme os usuários interagirem com seus agentes através dos canais.",
+  "noMatchTitle": "Nenhum contato encontrado",
+  "noMatchDescription": "Tente um termo de busca ou filtro diferente.",
+  "columns": {
+    "name": "Nome",
+    "username": "Usuário",
+    "senderId": "ID do Remetente",
+    "channelType": "Canal",
+    "peerKind": "Tipo",
+    "lastSeen": "Visto por Último"
+  },
+  "permissionsNote": {
+    "title": "Permissões de canal para nomes de contato",
+    "telegram": "Telegram — Nomes e nomes de usuário disponíveis automaticamente.",
+    "discord": "Discord — Nomes de exibição e nomes de usuário disponíveis automaticamente.",
+    "zalo": "Zalo — Nomes de exibição disponíveis automaticamente.",
+    "slack": "Slack — Nomes de exibição resolvidos via API do Slack (o bot deve estar no workspace).",
+    "feishu": "Feishu/Lark — Requer permissão contact:user.base:readonly. Sem isso, os nomes ficarão vazios."
+  },
+  "filters": {
+    "allChannels": "Todos os Canais",
+    "allTypes": "Todos os Tipos",
+    "direct": "Direto",
+    "group": "Grupo"
+  }
+}
