@@ -35,5 +35,11 @@
   "deleteError": "Falha ao excluir sessão",
   "deleteConfirm": "Tem certeza que deseja excluir a sessão \"{{name}}\"?",
   "deleteConfirmDesc": "Isso desconectará o número WhatsApp e removerá a sessão permanentemente.",
-  "refresh": "Atualizar"
+  "refresh": "Atualizar",
+  "restart": "Reiniciar",
+  "restarting": "Reiniciando sessão...",
+  "restarted": "Sessão reiniciada",
+  "errorRestarting": "Falha ao reiniciar sessão",
+  "linkedSuccess": "Sessão vinculada com sucesso",
+  "errorLinking": "Falha ao vincular sessão"
 }

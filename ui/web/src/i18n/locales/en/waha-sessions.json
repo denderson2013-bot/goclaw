@@ -35,5 +35,11 @@
   "deleteError": "Failed to delete session",
   "deleteConfirm": "Are you sure you want to delete session \"{{name}}\"?",
   "deleteConfirmDesc": "This will disconnect the WhatsApp number and remove the session permanently.",
-  "refresh": "Refresh"
+  "refresh": "Refresh",
+  "restart": "Restart",
+  "restarting": "Restarting session...",
+  "restarted": "Session restarted",
+  "errorRestarting": "Failed to restart session",
+  "linkedSuccess": "Session linked successfully",
+  "errorLinking": "Failed to link session"
 }

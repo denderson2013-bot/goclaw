@@ -158,6 +158,30 @@ export function WahaSessionsPage() {
     }
   };
 
+  const handleRestart = async (name: string) => {
+    try {
+      toast.info(t("restarting"));
+      await http.post(`/v1/waha/sessions/${name}/stop`);
+      await new Promise((r) => setTimeout(r, 2000));
+      await http.post(`/v1/waha/sessions/${name}/start`);
+      toast.success(t("restarted"));
+      fetchSessions();
+    } catch {
+      toast.error(t("errorRestarting"));
+    }
+  };
+
+  const handleLink = async (name: string, agentId: string) => {
+    try {
+      await http.post(`/v1/waha/sessions/${name}/link`, { agent_id: agentId });
+      setLinkedSessions((prev) => new Set([...prev, name]));
+      toast.success(t("linkedSuccess"));
+      fetchSessions();
+    } catch {
+      toast.error(t("errorLinking"));
+    }
+  };
+
   const statusBadge = (status: string) => {
     switch (status) {
       case "WORKING":
@@ -252,40 +276,56 @@ export function WahaSessionsPage() {
               )}
 
               {/* Actions */}
-              <div className="flex items-center gap-1.5 pt-1">
-                {session.status === "STOPPED" && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleStart(session.name)}
-                  >
+              <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t mt-2">
+                {/* Start - quando parado */}
+                {(session.status === "STOPPED" || session.status === "FAILED") && (
+                  <Button variant="outline" size="sm" onClick={() => handleStart(session.name)}>
                     <Play className="mr-1 h-3.5 w-3.5" />
                     {t("start")}
                   </Button>
                 )}
-                {session.status === "WORKING" && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleStop(session.name)}
-                  >
+
+                {/* Stop - quando rodando */}
+                {(session.status === "WORKING" || session.status === "SCAN_QR_CODE") && (
+                  <Button variant="outline" size="sm" onClick={() => handleStop(session.name)}>
                     <Square className="mr-1 h-3.5 w-3.5" />
                     {t("stop")}
                   </Button>
                 )}
+
+                {/* Reiniciar - quando rodando */}
+                {session.status === "WORKING" && (
+                  <Button variant="outline" size="sm" onClick={() => handleRestart(session.name)}>
+                    <RefreshCw className="mr-1 h-3.5 w-3.5" />
+                    {t("restart")}
+                  </Button>
+                )}
+
+                {/* QR Code - quando esperando scan */}
                 {session.status === "SCAN_QR_CODE" && (
                   <Button
-                    variant="outline"
+                    variant="default"
                     size="sm"
-                    onClick={() =>
-                      setQrSession(
-                        qrSession === session.name ? null : session.name,
-                      )
-                    }
+                    onClick={() => setQrSession(qrSession === session.name ? null : session.name)}
                   >
+                    <Smartphone className="mr-1 h-3.5 w-3.5" />
                     {t("scanQR")}
                   </Button>
                 )}
+
+                {/* Vincular - quando conectado e não vinculado */}
+                {session.status === "WORKING" && !linkedSessions.has(session.name) && agents.length > 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-green-600 border-green-300 hover:bg-green-50"
+                    onClick={() => { const a = agents[0]; if (a) handleLink(session.name, a.id); }}
+                  >
+                    {t("link")}
+                  </Button>
+                )}
+
+                {/* Deletar - sempre */}
                 <Button
                   variant="ghost"
                   size="sm"
