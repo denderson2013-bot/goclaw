@@ -41,5 +41,8 @@
   "restarted": "Sessão reiniciada",
   "errorRestarting": "Falha ao reiniciar sessão",
   "linkedSuccess": "Sessão vinculada com sucesso",
-  "errorLinking": "Falha ao vincular sessão"
+  "errorLinking": "Falha ao vincular sessão",
+  "unlink": "Desvincular",
+  "unlinkedSuccess": "Sessão desvinculada",
+  "errorUnlinking": "Falha ao desvincular sessão"
 }

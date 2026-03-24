@@ -198,6 +198,21 @@ export function WahaSessionsPage() {
     }
   };
 
+  const handleUnlink = async (name: string) => {
+    const ci = channelInstances.find(
+      (c: any) => c.channel_type === "waha" && c.name === name
+    );
+    if (!ci) return;
+    try {
+      await http.delete(`/v1/channels/instances/${ci.id}`);
+      setLinkedSessions((prev) => { const s = new Set(prev); s.delete(name); return s; });
+      toast.success(t("unlinkedSuccess"));
+      fetchSessions();
+    } catch {
+      toast.error(t("errorUnlinking"));
+    }
+  };
+
   const statusBadge = (status: string) => {
     switch (status) {
       case "WORKING":
@@ -335,17 +350,35 @@ export function WahaSessionsPage() {
                   </Button>
                 )}
 
-                {/* Vincular - quando conectado e SEM canal criado */}
-                {session.status === "WORKING" && !getLinkedAgent(session.name) && agents.length > 0 && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-green-600 border-green-300 hover:bg-green-50"
-                    onClick={() => { const a = agents[0]; if (a) handleLink(session.name, a.id); }}
-                  >
-                    {t("link")}
-                  </Button>
-                )}
+                {/* Vincular/Desvincular */}
+                {session.status === "WORKING" && (() => {
+                  const linked = getLinkedAgent(session.name);
+                  if (linked) {
+                    return (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-red-600 border-red-300 hover:bg-red-50"
+                        onClick={() => handleUnlink(session.name)}
+                      >
+                        {t("unlink")}
+                      </Button>
+                    );
+                  }
+                  if (agents.length > 0) {
+                    return (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-green-600 border-green-300 hover:bg-green-50"
+                        onClick={() => { const a = agents[0]; if (a) handleLink(session.name, a.id); }}
+                      >
+                        {t("link")}
+                      </Button>
+                    );
+                  }
+                  return null;
+                })()}
 
                 {/* Deletar - sempre */}
                 <Button

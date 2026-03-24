@@ -41,5 +41,8 @@
   "restarted": "Session restarted",
   "errorRestarting": "Failed to restart session",
   "linkedSuccess": "Session linked successfully",
-  "errorLinking": "Failed to link session"
+  "errorLinking": "Failed to link session",
+  "unlink": "Unlink",
+  "unlinkedSuccess": "Session unlinked",
+  "errorUnlinking": "Failed to unlink session"
 }
