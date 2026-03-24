@@ -498,8 +498,17 @@ func runGateway() {
 	// Register config-based channels as fallback when no DB instances loaded.
 	registerConfigChannels(cfg, channelMgr, msgBus, pgStores, instanceLoader)
 
-	// WhatsApp Cloud API management handler
-	server.SetWhatsAppCloudHandler(httpapi.NewWhatsAppCloudHandler(channelMgr, cfg.Gateway.Token))
+	// WhatsApp Cloud API management handler (with Embedded Signup dependencies)
+	whatsappCloudH := httpapi.NewWhatsAppCloudHandler(channelMgr, cfg.Gateway.Token)
+	whatsappCloudH.SetConfig(cfg)
+	whatsappCloudH.SetMessageBus(msgBus)
+	if pgStores.ChannelInstances != nil {
+		whatsappCloudH.SetInstanceStore(pgStores.ChannelInstances)
+	}
+	if pgStores.Agents != nil {
+		whatsappCloudH.SetAgentStore(pgStores.Agents)
+	}
+	server.SetWhatsAppCloudHandler(whatsappCloudH)
 
 	// Register channels/instances/links/teams RPC methods
 	wireChannelRPCMethods(server, pgStores, channelMgr, agentRouter, msgBus, workspace)

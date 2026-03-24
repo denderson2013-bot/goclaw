@@ -68,10 +68,12 @@ export const credentialsSchema: Record<string, FieldDef[]> = {
     { key: "session", label: "Sessão WAHA", type: "text", required: true, placeholder: "nome-da-sessao", help: "Nome da sessão conectada na WAHA (credenciais vêm do servidor)" },
   ],
   whatsapp_cloud: [
-    { key: "access_token", label: "Access Token", type: "password", required: true, placeholder: "EAAG...", help: "Permanent System User token or token from Embedded Signup" },
-    { key: "phone_number_id", label: "Phone Number ID", type: "text", required: true, placeholder: "123456789", help: "From Meta Business Manager > WhatsApp > Phone Numbers" },
-    { key: "waba_id", label: "WABA ID", type: "text", placeholder: "789012345", help: "WhatsApp Business Account ID (for templates and phone number management)" },
-    { key: "app_secret", label: "App Secret", type: "password", placeholder: "abc123...", help: "Meta App Secret for webhook signature validation (optional but recommended)" },
+    // Credentials are provisioned automatically via Embedded Signup.
+    // For manual setup, provide access_token + phone_number_id.
+    { key: "access_token", label: "Access Token", type: "password", required: false, placeholder: "EAAG...", help: "Use 'Conectar Numero' on the WhatsApp Cloud page for automatic setup, or paste a token here for manual config" },
+    { key: "phone_number_id", label: "Phone Number ID", type: "text", required: false, placeholder: "123456789", help: "From Meta Business Manager > WhatsApp > Phone Numbers" },
+    { key: "waba_id", label: "WABA ID", type: "text", placeholder: "789012345", help: "WhatsApp Business Account ID" },
+    { key: "app_secret", label: "App Secret", type: "password", placeholder: "abc123...", help: "Meta App Secret for webhook signature validation" },
     { key: "verify_token", label: "Verify Token", type: "text", placeholder: "my-verify-token", help: "Custom token for webhook verification handshake" },
   ],
 };

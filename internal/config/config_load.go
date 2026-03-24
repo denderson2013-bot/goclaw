@@ -130,6 +130,12 @@ func (c *Config) applyEnvOverrides() {
 	envStr("GOCLAW_SLACK_APP_TOKEN", &c.Channels.Slack.AppToken)
 	envStr("GOCLAW_SLACK_USER_TOKEN", &c.Channels.Slack.UserToken)
 
+	// Meta Embedded Signup (WhatsApp Cloud BSP)
+	envStr("GOCLAW_META_APP_ID", &c.Channels.WhatsAppCloud.MetaAppID)
+	envStr("GOCLAW_META_APP_SECRET", &c.Channels.WhatsAppCloud.MetaAppSecret)
+	envStr("GOCLAW_META_CONFIG_ID", &c.Channels.WhatsAppCloud.MetaConfigID)
+	envStr("GOCLAW_META_API_VERSION", &c.Channels.WhatsAppCloud.MetaAPIVersion)
+
 	// TTS secrets
 	envStr("GOCLAW_TTS_OPENAI_API_KEY", &c.Tts.OpenAI.APIKey)
 	envStr("GOCLAW_TTS_ELEVENLABS_API_KEY", &c.Tts.ElevenLabs.APIKey)

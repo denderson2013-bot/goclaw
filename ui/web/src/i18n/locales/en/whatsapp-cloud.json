@@ -5,6 +5,23 @@
     "numbers": "Numbers",
     "templates": "Templates"
   },
+  "signup": {
+    "success": "WhatsApp number connected successfully! The new channel instance is now active.",
+    "error": "Embedded Signup failed"
+  },
+  "instances": {
+    "title": "Connected Numbers",
+    "refresh": "Refresh",
+    "connect": "Connect Number",
+    "empty": "No WhatsApp Cloud numbers connected.",
+    "emptyHint": "Click 'Connect Number' to start the Meta Embedded Signup and add a WhatsApp number.",
+    "active": "Active",
+    "inactive": "Inactive",
+    "disable": "Disable",
+    "enable": "Enable",
+    "delete": "Delete",
+    "confirmDelete": "Are you sure you want to delete this WhatsApp Cloud instance?"
+  },
   "numbers": {
     "title": "Connected Phone Numbers",
     "refresh": "Refresh",

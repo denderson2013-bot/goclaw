@@ -5,6 +5,23 @@
     "numbers": "号码",
     "templates": "模板"
   },
+  "signup": {
+    "success": "WhatsApp 号码连接成功！新渠道实例已激活。",
+    "error": "嵌入式注册失败"
+  },
+  "instances": {
+    "title": "已连接号码",
+    "refresh": "刷新",
+    "connect": "连接号码",
+    "empty": "没有已连接的 WhatsApp Cloud 号码。",
+    "emptyHint": "点击'连接号码'开始 Meta 嵌入式注册并添加 WhatsApp 号码。",
+    "active": "活跃",
+    "inactive": "未激活",
+    "disable": "禁用",
+    "enable": "启用",
+    "delete": "删除",
+    "confirmDelete": "确定要删除此 WhatsApp Cloud 实例吗？"
+  },
   "numbers": {
     "title": "已连接的电话号码",
     "refresh": "刷新",

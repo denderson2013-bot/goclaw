@@ -213,6 +213,12 @@ type WhatsAppCloudConfig struct {
 	AllowFrom     FlexibleStringSlice `json:"allow_from"`
 	DMPolicy      string              `json:"dm_policy,omitempty"`
 	BlockReply    *bool               `json:"block_reply,omitempty"`
+
+	// Meta Embedded Signup (BSP) configuration
+	MetaAppID      string `json:"meta_app_id,omitempty"`
+	MetaAppSecret  string `json:"meta_app_secret,omitempty"`
+	MetaConfigID   string `json:"meta_config_id,omitempty"`
+	MetaAPIVersion string `json:"meta_api_version,omitempty"`
 }
 
 // ProvidersConfig maps provider name to its config.

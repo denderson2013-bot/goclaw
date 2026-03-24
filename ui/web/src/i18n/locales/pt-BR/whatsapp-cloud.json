@@ -5,6 +5,23 @@
     "numbers": "Numeros",
     "templates": "Templates"
   },
+  "signup": {
+    "success": "Numero WhatsApp conectado com sucesso! A nova instancia de canal esta ativa.",
+    "error": "Falha no Embedded Signup"
+  },
+  "instances": {
+    "title": "Numeros Conectados",
+    "refresh": "Atualizar",
+    "connect": "Conectar Numero",
+    "empty": "Nenhum numero WhatsApp Cloud conectado.",
+    "emptyHint": "Clique em 'Conectar Numero' para iniciar o cadastro Meta e adicionar um numero WhatsApp.",
+    "active": "Ativo",
+    "inactive": "Inativo",
+    "disable": "Desativar",
+    "enable": "Ativar",
+    "delete": "Deletar",
+    "confirmDelete": "Tem certeza que deseja deletar esta instancia WhatsApp Cloud?"
+  },
   "numbers": {
     "title": "Numeros Conectados",
     "refresh": "Atualizar",
