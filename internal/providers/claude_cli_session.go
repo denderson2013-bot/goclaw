@@ -45,12 +45,13 @@ func (p *ClaudeCLIProvider) buildArgs(model, workDir, mcpConfigPath string, cliS
 	// Session persistence: check if CLI session file exists on disk.
 	// If exists → --resume (continue conversation). If not → --session-id (create new).
 	// Session files live at ~/.claude/projects/<sanitized-workdir>/<uuid>.jsonl
-	sid := cliSessionID.String()
-	if sessionFileExists(workDir, cliSessionID) {
-		args = append(args, "--resume", sid)
-	} else {
-		args = append(args, "--session-id", sid)
-	}
+	//
+	// NOTE: Claude CLI 2.x can leave sessions locked after a crash or timeout.
+	// To avoid permanent "session already in use" errors, we always create a new
+	// session instead of resuming. The system prompt (CLAUDE.md) provides full
+	// context on every call, so session resumption is not critical.
+	sid := uuid.New().String()
+	args = append(args, "--session-id", sid)
 
 	if hasImages {
 		args = append(args, "--input-format", "stream-json")
