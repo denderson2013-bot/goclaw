@@ -82,7 +82,7 @@ func (h *WhatsAppCloudHandler) findCloudChannel(r *http.Request) *whatsappcloud.
 func (h *WhatsAppCloudHandler) handleListNumbers(w http.ResponseWriter, r *http.Request) {
 	ch := h.findCloudChannel(r)
 	if ch == nil {
-		writeJSON(w, http.StatusNotFound, map[string]string{"error": "no whatsapp_cloud channel found"})
+		writeJSON(w, http.StatusOK, map[string]any{"data": []any{}, "message": "Nenhum canal WhatsApp Cloud configurado. Crie um em Canais."})
 		return
 	}
 
@@ -109,7 +109,7 @@ func (h *WhatsAppCloudHandler) handleListNumbers(w http.ResponseWriter, r *http.
 func (h *WhatsAppCloudHandler) handleListTemplates(w http.ResponseWriter, r *http.Request) {
 	ch := h.findCloudChannel(r)
 	if ch == nil {
-		writeJSON(w, http.StatusNotFound, map[string]string{"error": "no whatsapp_cloud channel found"})
+		writeJSON(w, http.StatusOK, map[string]any{"data": []any{}, "message": "Nenhum canal WhatsApp Cloud configurado. Crie um em Canais."})
 		return
 	}
 
