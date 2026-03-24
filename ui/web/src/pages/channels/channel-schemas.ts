@@ -65,9 +65,7 @@ export const credentialsSchema: Record<string, FieldDef[]> = {
     { key: "bridge_url", label: "Bridge URL", type: "text", required: true, placeholder: "http://bridge:3000" },
   ],
   waha: [
-    { key: "base_url", label: "WAHA URL", type: "text", required: true, placeholder: "https://waha.seuservidor.com", help: "URL base da sua instância WAHA" },
-    { key: "api_key", label: "API Key", type: "password", required: true, placeholder: "sua-api-key", help: "X-Api-Key da WAHA" },
-    { key: "session", label: "Session", type: "text", required: true, placeholder: "default", help: "Nome da sessão WAHA" },
+    { key: "session", label: "Sessão WAHA", type: "text", required: true, placeholder: "nome-da-sessao", help: "Nome da sessão conectada na WAHA (credenciais vêm do servidor)" },
   ],
 };
 

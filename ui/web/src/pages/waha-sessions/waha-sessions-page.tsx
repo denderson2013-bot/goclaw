@@ -44,6 +44,7 @@ export function WahaSessionsPage() {
   const token = useAuthStore((s) => s.token);
 
   const [sessions, setSessions] = useState<WahaSession[]>([]);
+  const [channelInstances, setChannelInstances] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [createOpen, setCreateOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<WahaSession | null>(null);
@@ -60,14 +61,29 @@ export function WahaSessionsPage() {
 
   const fetchSessions = useCallback(async () => {
     try {
-      const data = await http.get<WahaSession[]>("/v1/waha/sessions");
-      setSessions(Array.isArray(data) ? data : []);
+      const [sessData, ciData] = await Promise.all([
+        http.get<WahaSession[]>("/v1/waha/sessions"),
+        http.get<any>("/v1/channels/instances"),
+      ]);
+      setSessions(Array.isArray(sessData) ? sessData : []);
+      const instances = ciData?.instances ?? ciData ?? [];
+      setChannelInstances(Array.isArray(instances) ? instances : []);
     } catch {
       setSessions([]);
     } finally {
       setLoading(false);
     }
   }, [http]);
+
+  // Map session name → linked agent info
+  const getLinkedAgent = useCallback((sessionName: string) => {
+    const ci = channelInstances.find(
+      (c: any) => c.channel_type === "waha" && c.name === sessionName
+    );
+    if (!ci) return null;
+    const agent = agents.find((a) => a.id === ci.agent_id);
+    return agent ? { name: agent.display_name || agent.agent_key, id: agent.id } : null;
+  }, [channelInstances, agents]);
 
   // Poll sessions every 3 seconds
   useEffect(() => {
@@ -253,7 +269,17 @@ export function WahaSessionsPage() {
                     </p>
                   )}
                 </div>
-                {statusBadge(session.status)}
+                <div className="flex flex-col items-end gap-1">
+                  {statusBadge(session.status)}
+                  {(() => {
+                    const linked = getLinkedAgent(session.name);
+                    return linked ? (
+                      <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
+                        {linked.name}
+                      </Badge>
+                    ) : null;
+                  })()}
+                </div>
               </div>
 
               {/* QR code display */}
