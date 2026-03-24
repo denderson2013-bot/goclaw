@@ -39,6 +39,7 @@
     "apiKeys": "API 密钥",
     "apiDocs": "API 文档",
     "packages": "软件包",
-    "voice": "语音助手"
+    "voice": "语音助手",
+    "wahaSessions": "WAHA 会话"
   }
 }

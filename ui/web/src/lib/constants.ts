@@ -39,6 +39,7 @@ export const ROUTES = {
   PACKAGES: "/packages",
   SETUP: "/setup",
   VOICE: "/voice",
+  WAHA_SESSIONS: "/waha-sessions",
 } as const;
 
 export const LOCAL_STORAGE_KEYS = {

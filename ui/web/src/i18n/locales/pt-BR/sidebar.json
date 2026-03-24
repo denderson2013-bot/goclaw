@@ -39,6 +39,7 @@
     "apiKeys": "Chaves de API",
     "apiDocs": "Documentação da API",
     "packages": "Pacotes",
-    "voice": "Assistente de Voz"
+    "voice": "Assistente de Voz",
+    "wahaSessions": "Sessões WAHA"
   }
 }

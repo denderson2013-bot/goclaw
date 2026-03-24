@@ -39,6 +39,7 @@
     "apiKeys": "API Keys",
     "apiDocs": "API Docs",
     "packages": "Packages",
-    "voice": "Voice Assistant"
+    "voice": "Voice Assistant",
+    "wahaSessions": "WAHA Sessions"
   }
 }

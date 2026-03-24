@@ -373,6 +373,20 @@ func runGateway() {
 	// Runtime package management (install/uninstall system/pip/npm packages)
 	server.SetPackagesHandler(httpapi.NewPackagesHandler(cfg.Gateway.Token))
 
+	// WAHA session management API (only when WAHA base URL is configured)
+	if cfg.Channels.Waha.BaseURL != "" {
+		wahaH := httpapi.NewWahaSessionsHandler(
+			cfg.Channels.Waha.BaseURL,
+			cfg.Channels.Waha.ApiKey,
+			cfg.Gateway.Token,
+			pgStores.ChannelInstances,
+			msgBus,
+			"", // encKey — not needed for plain JSON credentials
+		)
+		server.SetWahaSessionsHandler(wahaH)
+		slog.Info("waha sessions handler enabled", "base_url", cfg.Channels.Waha.BaseURL)
+	}
+
 	// API key management
 	// API documentation (OpenAPI spec + Swagger UI at /docs)
 	server.SetDocsHandler(httpapi.NewDocsHandler(cfg.Gateway.Token))

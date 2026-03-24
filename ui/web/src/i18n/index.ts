@@ -35,6 +35,7 @@ import enApiKeys from "./locales/en/api-keys.json";
 import enCliCredentials from "./locales/en/cli-credentials.json";
 import enPackages from "./locales/en/packages.json";
 import enVoice from "./locales/en/voice.json";
+import enWahaSessions from "./locales/en/waha-sessions.json";
 
 // --- VI namespaces ---
 import viCommon from "./locales/vi/common.json";
@@ -70,6 +71,7 @@ import viApiKeys from "./locales/vi/api-keys.json";
 import viCliCredentials from "./locales/vi/cli-credentials.json";
 import viPackages from "./locales/vi/packages.json";
 import viVoice from "./locales/vi/voice.json";
+import viWahaSessions from "./locales/vi/waha-sessions.json";
 
 // --- ZH namespaces ---
 import zhCommon from "./locales/zh/common.json";
@@ -105,6 +107,7 @@ import zhApiKeys from "./locales/zh/api-keys.json";
 import zhCliCredentials from "./locales/zh/cli-credentials.json";
 import zhPackages from "./locales/zh/packages.json";
 import zhVoice from "./locales/zh/voice.json";
+import zhWahaSessions from "./locales/zh/waha-sessions.json";
 
 // --- PT-BR namespaces ---
 import ptBrCommon from "./locales/pt-BR/common.json";
@@ -140,6 +143,7 @@ import ptBrApiKeys from "./locales/pt-BR/api-keys.json";
 import ptBrCliCredentials from "./locales/pt-BR/cli-credentials.json";
 import ptBrPackages from "./locales/pt-BR/packages.json";
 import ptBrVoice from "./locales/pt-BR/voice.json";
+import ptBrWahaSessions from "./locales/pt-BR/waha-sessions.json";
 
 const STORAGE_KEY = "focosia:language";
 
@@ -159,7 +163,7 @@ const ns = [
   "channels", "providers", "traces", "events",
   "usage", "approvals", "nodes", "logs", "tools", "mcp", "tts",
   "setup", "memory", "storage", "pending-messages", "contacts", "activity", "api-keys",
-  "cli-credentials", "packages", "voice",
+  "cli-credentials", "packages", "voice", "waha-sessions",
 ] as const;
 
 i18n.use(initReactI18next).init({
@@ -177,6 +181,7 @@ i18n.use(initReactI18next).init({
       "cli-credentials": enCliCredentials,
       packages: enPackages,
       voice: enVoice,
+      "waha-sessions": enWahaSessions,
     },
     vi: {
       common: viCommon, sidebar: viSidebar, topbar: viTopbar, login: viLogin,
@@ -191,6 +196,7 @@ i18n.use(initReactI18next).init({
       "cli-credentials": viCliCredentials,
       packages: viPackages,
       voice: viVoice,
+      "waha-sessions": viWahaSessions,
     },
     zh: {
       common: zhCommon, sidebar: zhSidebar, topbar: zhTopbar, login: zhLogin,
@@ -205,6 +211,7 @@ i18n.use(initReactI18next).init({
       "cli-credentials": zhCliCredentials,
       packages: zhPackages,
       voice: zhVoice,
+      "waha-sessions": zhWahaSessions,
     },
     "pt-BR": {
       common: ptBrCommon, sidebar: ptBrSidebar, topbar: ptBrTopbar, login: ptBrLogin,
@@ -219,6 +226,7 @@ i18n.use(initReactI18next).init({
       "cli-credentials": ptBrCliCredentials,
       packages: ptBrPackages,
       voice: ptBrVoice,
+      "waha-sessions": ptBrWahaSessions,
     },
   },
   ns: [...ns],

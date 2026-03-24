@@ -64,7 +64,8 @@ type Server struct {
 	usageHandler            *httpapi.UsageHandler            // usage analytics API
 	apiKeysHandler     *httpapi.APIKeysHandler      // API key management
 	apiKeyStore        store.APIKeyStore            // for API key auth lookup
-	docsHandler        *httpapi.DocsHandler         // OpenAPI spec + Swagger UI
+	docsHandler             *httpapi.DocsHandler         // OpenAPI spec + Swagger UI
+	wahaSessionsHandler    *httpapi.WahaSessionsHandler // WAHA session management API
 	agentStore         store.AgentStore             // for context injection in tools_invoke
 	msgBus             *bus.MessageBus              // for MCP bridge media delivery
 
@@ -297,6 +298,11 @@ func (s *Server) BuildMux() *http.ServeMux {
 
 	if s.packagesHandler != nil {
 		s.packagesHandler.RegisterRoutes(mux)
+	}
+
+	// WAHA session management API
+	if s.wahaSessionsHandler != nil {
+		s.wahaSessionsHandler.RegisterRoutes(mux)
 	}
 
 	// API documentation (OpenAPI spec + Swagger UI)
@@ -560,6 +566,9 @@ func (s *Server) SetUsageHandler(h *httpapi.UsageHandler) { s.usageHandler = h }
 
 // SetDocsHandler sets the OpenAPI spec + Swagger UI handler.
 func (s *Server) SetDocsHandler(h *httpapi.DocsHandler) { s.docsHandler = h }
+
+// SetWahaSessionsHandler sets the WAHA session management handler.
+func (s *Server) SetWahaSessionsHandler(h *httpapi.WahaSessionsHandler) { s.wahaSessionsHandler = h }
 
 // SetAgentStore sets the agent store for context injection in tools_invoke.
 func (s *Server) SetAgentStore(as store.AgentStore) { s.agentStore = as }

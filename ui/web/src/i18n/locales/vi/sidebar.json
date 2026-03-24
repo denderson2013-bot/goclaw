@@ -39,6 +39,7 @@
     "apiKeys": "Khóa API",
     "apiDocs": "Tài liệu API",
     "packages": "Gói phần mềm",
-    "voice": "Trợ lý giọng nói"
+    "voice": "Trợ lý giọng nói",
+    "wahaSessions": "Phiên WAHA"
   }
 }

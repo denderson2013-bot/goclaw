@@ -101,6 +101,9 @@ const PackagesPage = lazyWithRetry(() =>
 const VoicePage = lazyWithRetry(() =>
   import("@/pages/voice/voice-page").then((m) => ({ default: m.VoicePage })),
 );
+const WahaSessionsPage = lazyWithRetry(() =>
+  import("@/pages/waha-sessions/waha-sessions-page").then((m) => ({ default: m.WahaSessionsPage })),
+);
 
 function PageLoader() {
   return (
@@ -176,6 +179,7 @@ export function AppRoutes() {
           <Route path={ROUTES.API_KEYS} element={<ApiKeysPage />} />
           <Route path={ROUTES.PACKAGES} element={<PackagesPage />} />
           <Route path={ROUTES.VOICE} element={<VoicePage />} />
+          <Route path={ROUTES.WAHA_SESSIONS} element={<WahaSessionsPage />} />
         </Route>
 
         {/* Catch-all → overview */}
