@@ -7,6 +7,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/nextlevelbuilder/goclaw/internal/channels"
@@ -14,7 +15,13 @@ import (
 	"github.com/nextlevelbuilder/goclaw/internal/store"
 )
 
-const graphAPIBase = "https://graph.facebook.com/v21.0"
+func metaGraphAPIBase() string {
+	version := os.Getenv("GOCLAW_META_API_VERSION")
+	if version == "" {
+		version = "v24.0"
+	}
+	return "https://graph.facebook.com/" + version
+}
 
 // WhatsAppCloudHandler handles WhatsApp Cloud API management endpoints.
 type WhatsAppCloudHandler struct {
@@ -85,7 +92,7 @@ func (h *WhatsAppCloudHandler) handleListNumbers(w http.ResponseWriter, r *http.
 		return
 	}
 
-	url := fmt.Sprintf("%s/%s/phone_numbers", graphAPIBase, wabaID)
+	url := fmt.Sprintf("%s/%s/phone_numbers", metaGraphAPIBase(), wabaID)
 	data, err := h.graphGet(r, url, ch.AccessToken())
 	if err != nil {
 		slog.Error("whatsapp_cloud.list_numbers", "error", err)
@@ -112,7 +119,7 @@ func (h *WhatsAppCloudHandler) handleListTemplates(w http.ResponseWriter, r *htt
 		return
 	}
 
-	url := fmt.Sprintf("%s/%s/message_templates", graphAPIBase, wabaID)
+	url := fmt.Sprintf("%s/%s/message_templates", metaGraphAPIBase(), wabaID)
 	data, err := h.graphGet(r, url, ch.AccessToken())
 	if err != nil {
 		slog.Error("whatsapp_cloud.list_templates", "error", err)
@@ -145,7 +152,7 @@ func (h *WhatsAppCloudHandler) handleCreateTemplate(w http.ResponseWriter, r *ht
 		return
 	}
 
-	url := fmt.Sprintf("%s/%s/message_templates", graphAPIBase, wabaID)
+	url := fmt.Sprintf("%s/%s/message_templates", metaGraphAPIBase(), wabaID)
 	data, err := h.graphPost(r, url, ch.AccessToken(), body)
 	if err != nil {
 		slog.Error("whatsapp_cloud.create_template", "error", err)

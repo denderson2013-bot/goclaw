@@ -13,6 +13,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -23,11 +24,19 @@ import (
 )
 
 const (
-	graphAPIBase        = "https://graph.facebook.com/v21.0"
 	defaultHTTPTimeout  = 15 * time.Second
 	pairingDebounceTime = 60 * time.Second
 	windowDuration      = 24 * time.Hour
 )
+
+// graphAPIBase returns the Meta Graph API base URL using the configured API version.
+func graphAPIBase() string {
+	version := os.Getenv("GOCLAW_META_API_VERSION")
+	if version == "" {
+		version = "v24.0"
+	}
+	return "https://graph.facebook.com/" + version
+}
 
 // Channel implements the official Meta WhatsApp Cloud API channel.
 // It receives messages via webhooks and sends via the Graph API.
@@ -310,7 +319,7 @@ func (c *Channel) handleMessage(msg WebhookMessage, contactNames map[string]stri
 	var media []string
 	mediaID := c.extractMediaID(msg)
 	if mediaID != "" {
-		mediaURL := fmt.Sprintf("%s/%s", graphAPIBase, mediaID)
+		mediaURL := fmt.Sprintf("%s/%s", graphAPIBase(), mediaID)
 		media = append(media, mediaURL)
 	}
 
@@ -513,7 +522,7 @@ func (c *Channel) markAsRead(messageID string) {
 		return
 	}
 
-	url := fmt.Sprintf("%s/%s/messages", graphAPIBase, c.phoneNumberID)
+	url := fmt.Sprintf("%s/%s/messages", graphAPIBase(), c.phoneNumberID)
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
 	if err != nil {
 		return
@@ -536,7 +545,7 @@ func (c *Channel) doSend(ctx context.Context, req SendMessageRequest) (*SendMess
 		return nil, fmt.Errorf("whatsapp_cloud marshal: %w", err)
 	}
 
-	url := fmt.Sprintf("%s/%s/messages", graphAPIBase, c.phoneNumberID)
+	url := fmt.Sprintf("%s/%s/messages", graphAPIBase(), c.phoneNumberID)
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
 	if err != nil {
 		return nil, fmt.Errorf("whatsapp_cloud request: %w", err)
