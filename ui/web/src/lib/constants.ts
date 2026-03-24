@@ -40,6 +40,7 @@ export const ROUTES = {
   SETUP: "/setup",
   VOICE: "/voice",
   WAHA_SESSIONS: "/waha-sessions",
+  WHATSAPP_CLOUD: "/whatsapp-cloud",
 } as const;
 
 export const LOCAL_STORAGE_KEYS = {

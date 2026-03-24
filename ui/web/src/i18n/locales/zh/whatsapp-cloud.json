@@ -1,0 +1,28 @@
+{
+  "title": "WhatsApp Cloud API",
+  "description": "管理您的官方 Meta WhatsApp Business API 号码和模板。",
+  "tabs": {
+    "numbers": "号码",
+    "templates": "模板"
+  },
+  "numbers": {
+    "title": "已连接的电话号码",
+    "refresh": "刷新",
+    "phone": "电话",
+    "displayName": "显示名称",
+    "quality": "质量",
+    "status": "状态",
+    "empty": "未找到电话号码。",
+    "emptyHint": "请先连接 WhatsApp Cloud 渠道实例。"
+  },
+  "templates": {
+    "title": "消息模板",
+    "refresh": "刷新",
+    "name": "名称",
+    "language": "语言",
+    "category": "类别",
+    "status": "状态",
+    "empty": "未找到模板。",
+    "emptyHint": "在 Meta Business Manager 或通过 API 创建模板。"
+  }
+}

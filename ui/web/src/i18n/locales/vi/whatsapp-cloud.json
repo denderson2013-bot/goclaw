@@ -1,0 +1,28 @@
+{
+  "title": "WhatsApp Cloud API",
+  "description": "Quan ly so dien thoai va mau tin nhan WhatsApp Business API chinh thuc (Meta).",
+  "tabs": {
+    "numbers": "So dien thoai",
+    "templates": "Mau tin nhan"
+  },
+  "numbers": {
+    "title": "So dien thoai da ket noi",
+    "refresh": "Lam moi",
+    "phone": "So dien thoai",
+    "displayName": "Ten hien thi",
+    "quality": "Chat luong",
+    "status": "Trang thai",
+    "empty": "Khong tim thay so dien thoai nao.",
+    "emptyHint": "Ket noi kenh WhatsApp Cloud truoc."
+  },
+  "templates": {
+    "title": "Mau tin nhan",
+    "refresh": "Lam moi",
+    "name": "Ten",
+    "language": "Ngon ngu",
+    "category": "Danh muc",
+    "status": "Trang thai",
+    "empty": "Khong tim thay mau tin nhan nao.",
+    "emptyHint": "Tao mau trong Meta Business Manager hoac qua API."
+  }
+}

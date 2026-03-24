@@ -21,6 +21,7 @@ type ChannelsConfig struct {
 	ZaloPersonal      ZaloPersonalConfig       `json:"zalo_personal"`
 	Feishu            FeishuConfig             `json:"feishu"`
 	Waha              WahaConfig               `json:"waha"`
+	WhatsAppCloud     WhatsAppCloudConfig      `json:"whatsapp_cloud"`
 	PendingCompaction *PendingCompactionConfig `json:"pending_compaction,omitempty"` // global pending message compaction settings
 }
 
@@ -200,6 +201,18 @@ type WahaConfig struct {
 	GroupPolicy string              `json:"group_policy,omitempty"`
 	BlockReply  *bool               `json:"block_reply,omitempty"`
 	WebhookPath string              `json:"webhook_path,omitempty"`
+}
+
+type WhatsAppCloudConfig struct {
+	Enabled       bool                `json:"enabled"`
+	AccessToken   string              `json:"access_token"`
+	PhoneNumberID string              `json:"phone_number_id"`
+	WabaID        string              `json:"waba_id"`
+	AppSecret     string              `json:"app_secret,omitempty"`
+	VerifyToken   string              `json:"verify_token,omitempty"`
+	AllowFrom     FlexibleStringSlice `json:"allow_from"`
+	DMPolicy      string              `json:"dm_policy,omitempty"`
+	BlockReply    *bool               `json:"block_reply,omitempty"`
 }
 
 // ProvidersConfig maps provider name to its config.

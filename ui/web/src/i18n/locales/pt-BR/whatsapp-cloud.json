@@ -1,0 +1,28 @@
+{
+  "title": "WhatsApp Cloud API",
+  "description": "Gerencie seus numeros e templates da API oficial do WhatsApp Business (Meta).",
+  "tabs": {
+    "numbers": "Numeros",
+    "templates": "Templates"
+  },
+  "numbers": {
+    "title": "Numeros Conectados",
+    "refresh": "Atualizar",
+    "phone": "Telefone",
+    "displayName": "Nome de Exibicao",
+    "quality": "Qualidade",
+    "status": "Status",
+    "empty": "Nenhum numero encontrado.",
+    "emptyHint": "Conecte uma instancia de canal WhatsApp Cloud primeiro."
+  },
+  "templates": {
+    "title": "Templates de Mensagem",
+    "refresh": "Atualizar",
+    "name": "Nome",
+    "language": "Idioma",
+    "category": "Categoria",
+    "status": "Status",
+    "empty": "Nenhum template encontrado.",
+    "emptyHint": "Crie templates no Meta Business Manager ou pela API."
+  }
+}

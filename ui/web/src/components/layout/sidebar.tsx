@@ -28,6 +28,7 @@ import {
   FileText,
   Mic,
   Smartphone,
+  MessageCircle,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { SidebarGroup } from "./sidebar-group";
@@ -91,6 +92,7 @@ export function Sidebar({ collapsed, onNavItemClick }: SidebarProps) {
           <SidebarItem to={ROUTES.CHANNELS} icon={Radio} label={t("nav.channels")} collapsed={collapsed} />
           <SidebarItem to={ROUTES.NODES} icon={Link} label={t("nav.nodes")} collapsed={collapsed} badge={pendingCount} />
           <SidebarItem to={ROUTES.WAHA_SESSIONS} icon={Smartphone} label={t("nav.wahaSessions")} collapsed={collapsed} />
+          <SidebarItem to={ROUTES.WHATSAPP_CLOUD} icon={MessageCircle} label={t("nav.whatsappCloud")} collapsed={collapsed} />
         </SidebarGroup>
 
         <SidebarGroup label={t("groups.capabilities")} collapsed={collapsed}>

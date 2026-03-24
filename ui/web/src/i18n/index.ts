@@ -43,6 +43,7 @@ import enCliCredentials from "./locales/en/cli-credentials.json";
 import enPackages from "./locales/en/packages.json";
 import enVoice from "./locales/en/voice.json";
 import enWahaSessions from "./locales/en/waha-sessions.json";
+import enWhatsappCloud from "./locales/en/whatsapp-cloud.json";
 
 // --- VI namespaces ---
 import viCommon from "./locales/vi/common.json";
@@ -79,6 +80,7 @@ import viCliCredentials from "./locales/vi/cli-credentials.json";
 import viPackages from "./locales/vi/packages.json";
 import viVoice from "./locales/vi/voice.json";
 import viWahaSessions from "./locales/vi/waha-sessions.json";
+import viWhatsappCloud from "./locales/vi/whatsapp-cloud.json";
 
 // --- ZH namespaces ---
 import zhCommon from "./locales/zh/common.json";
@@ -115,6 +117,7 @@ import zhCliCredentials from "./locales/zh/cli-credentials.json";
 import zhPackages from "./locales/zh/packages.json";
 import zhVoice from "./locales/zh/voice.json";
 import zhWahaSessions from "./locales/zh/waha-sessions.json";
+import zhWhatsappCloud from "./locales/zh/whatsapp-cloud.json";
 
 // --- PT-BR namespaces ---
 import ptBrCommon from "./locales/pt-BR/common.json";
@@ -151,6 +154,7 @@ import ptBrCliCredentials from "./locales/pt-BR/cli-credentials.json";
 import ptBrPackages from "./locales/pt-BR/packages.json";
 import ptBrVoice from "./locales/pt-BR/voice.json";
 import ptBrWahaSessions from "./locales/pt-BR/waha-sessions.json";
+import ptBrWhatsappCloud from "./locales/pt-BR/whatsapp-cloud.json";
 
 const STORAGE_KEY = "focosia:language";
 
@@ -170,7 +174,7 @@ const ns = [
   "channels", "providers", "traces", "events",
   "usage", "approvals", "nodes", "logs", "tools", "mcp", "tts",
   "setup", "memory", "storage", "pending-messages", "contacts", "activity", "api-keys",
-  "cli-credentials", "packages", "voice", "waha-sessions",
+  "cli-credentials", "packages", "voice", "waha-sessions", "whatsapp-cloud",
 ] as const;
 
 i18n.use(initReactI18next).init({
@@ -189,6 +193,7 @@ i18n.use(initReactI18next).init({
       packages: enPackages,
       voice: enVoice,
       "waha-sessions": enWahaSessions,
+      "whatsapp-cloud": enWhatsappCloud,
     },
     vi: {
       common: viCommon, sidebar: viSidebar, topbar: viTopbar, login: viLogin,
@@ -204,6 +209,7 @@ i18n.use(initReactI18next).init({
       packages: viPackages,
       voice: viVoice,
       "waha-sessions": viWahaSessions,
+      "whatsapp-cloud": viWhatsappCloud,
     },
     zh: {
       common: zhCommon, sidebar: zhSidebar, topbar: zhTopbar, login: zhLogin,
@@ -219,6 +225,7 @@ i18n.use(initReactI18next).init({
       packages: zhPackages,
       voice: zhVoice,
       "waha-sessions": zhWahaSessions,
+      "whatsapp-cloud": zhWhatsappCloud,
     },
     "pt-BR": {
       common: ptBrCommon, sidebar: ptBrSidebar, topbar: ptBrTopbar, login: ptBrLogin,
@@ -234,6 +241,7 @@ i18n.use(initReactI18next).init({
       packages: ptBrPackages,
       voice: ptBrVoice,
       "waha-sessions": ptBrWahaSessions,
+      "whatsapp-cloud": ptBrWhatsappCloud,
     },
   },
   ns: [...ns],

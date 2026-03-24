@@ -65,7 +65,8 @@ type Server struct {
 	apiKeysHandler     *httpapi.APIKeysHandler      // API key management
 	apiKeyStore        store.APIKeyStore            // for API key auth lookup
 	docsHandler             *httpapi.DocsHandler         // OpenAPI spec + Swagger UI
-	wahaSessionsHandler    *httpapi.WahaSessionsHandler // WAHA session management API
+	wahaSessionsHandler        *httpapi.WahaSessionsHandler    // WAHA session management API
+	whatsappCloudHandler       *httpapi.WhatsAppCloudHandler   // WhatsApp Cloud API management
 	agentStore         store.AgentStore             // for context injection in tools_invoke
 	msgBus             *bus.MessageBus              // for MCP bridge media delivery
 
@@ -303,6 +304,11 @@ func (s *Server) BuildMux() *http.ServeMux {
 	// WAHA session management API
 	if s.wahaSessionsHandler != nil {
 		s.wahaSessionsHandler.RegisterRoutes(mux)
+	}
+
+	// WhatsApp Cloud API management
+	if s.whatsappCloudHandler != nil {
+		s.whatsappCloudHandler.RegisterRoutes(mux)
 	}
 
 	// API documentation (OpenAPI spec + Swagger UI)
@@ -569,6 +575,9 @@ func (s *Server) SetDocsHandler(h *httpapi.DocsHandler) { s.docsHandler = h }
 
 // SetWahaSessionsHandler sets the WAHA session management handler.
 func (s *Server) SetWahaSessionsHandler(h *httpapi.WahaSessionsHandler) { s.wahaSessionsHandler = h }
+
+// SetWhatsAppCloudHandler sets the WhatsApp Cloud API management handler.
+func (s *Server) SetWhatsAppCloudHandler(h *httpapi.WhatsAppCloudHandler) { s.whatsappCloudHandler = h }
 
 // SetAgentStore sets the agent store for context injection in tools_invoke.
 func (s *Server) SetAgentStore(as store.AgentStore) { s.agentStore = as }

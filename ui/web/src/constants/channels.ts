@@ -7,4 +7,5 @@ export const CHANNEL_TYPES = [
   { value: "zalo_personal", label: "Zalo Personal" },
   { value: "whatsapp", label: "WhatsApp (Bridge)" },
   { value: "waha", label: "WhatsApp (WAHA)" },
+  { value: "whatsapp_cloud", label: "WhatsApp (Meta Oficial)" },
 ] as const;
