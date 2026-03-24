@@ -20,6 +20,8 @@ type ChannelsConfig struct {
 	Zalo              ZaloConfig               `json:"zalo"`
 	ZaloPersonal      ZaloPersonalConfig       `json:"zalo_personal"`
 	Feishu            FeishuConfig             `json:"feishu"`
+	Waha              WahaConfig               `json:"waha"`
+	WhatsAppCloud     WhatsAppCloudConfig      `json:"whatsapp_cloud"`
 	PendingCompaction *PendingCompactionConfig `json:"pending_compaction,omitempty"` // global pending message compaction settings
 }
 
@@ -187,6 +189,36 @@ type FeishuConfig struct {
 	STTTenantID       string              `json:"stt_tenant_id,omitempty"`
 	STTTimeoutSeconds int                 `json:"stt_timeout_seconds,omitempty"`
 	VoiceAgentID      string              `json:"voice_agent_id,omitempty"`
+}
+
+type WahaConfig struct {
+	Enabled     bool                `json:"enabled"`
+	BaseURL     string              `json:"base_url"`
+	ApiKey      string              `json:"api_key"`
+	Session     string              `json:"session"`
+	AllowFrom   FlexibleStringSlice `json:"allow_from"`
+	DMPolicy    string              `json:"dm_policy,omitempty"`
+	GroupPolicy string              `json:"group_policy,omitempty"`
+	BlockReply  *bool               `json:"block_reply,omitempty"`
+	WebhookPath string              `json:"webhook_path,omitempty"`
+}
+
+type WhatsAppCloudConfig struct {
+	Enabled       bool                `json:"enabled"`
+	AccessToken   string              `json:"access_token"`
+	PhoneNumberID string              `json:"phone_number_id"`
+	WabaID        string              `json:"waba_id"`
+	AppSecret     string              `json:"app_secret,omitempty"`
+	VerifyToken   string              `json:"verify_token,omitempty"`
+	AllowFrom     FlexibleStringSlice `json:"allow_from"`
+	DMPolicy      string              `json:"dm_policy,omitempty"`
+	BlockReply    *bool               `json:"block_reply,omitempty"`
+
+	// Meta Embedded Signup (BSP) configuration
+	MetaAppID      string `json:"meta_app_id,omitempty"`
+	MetaAppSecret  string `json:"meta_app_secret,omitempty"`
+	MetaConfigID   string `json:"meta_config_id,omitempty"`
+	MetaAPIVersion string `json:"meta_api_version,omitempty"`
 }
 
 // ProvidersConfig maps provider name to its config.

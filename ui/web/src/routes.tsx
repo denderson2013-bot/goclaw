@@ -98,6 +98,15 @@ const ApiKeysPage = lazyWithRetry(() =>
 const PackagesPage = lazyWithRetry(() =>
   import("@/pages/packages/packages-page").then((m) => ({ default: m.PackagesPage })),
 );
+const VoicePage = lazyWithRetry(() =>
+  import("@/pages/voice/voice-page").then((m) => ({ default: m.VoicePage })),
+);
+const WahaSessionsPage = lazyWithRetry(() =>
+  import("@/pages/waha-sessions/waha-sessions-page").then((m) => ({ default: m.WahaSessionsPage })),
+);
+const WhatsAppCloudPage = lazyWithRetry(() =>
+  import("@/pages/whatsapp-cloud/whatsapp-cloud-page").then((m) => ({ default: m.WhatsAppCloudPage })),
+);
 
 function PageLoader() {
   return (
@@ -172,6 +181,9 @@ export function AppRoutes() {
           <Route path={ROUTES.CLI_CREDENTIALS} element={<CliCredentialsPage />} />
           <Route path={ROUTES.API_KEYS} element={<ApiKeysPage />} />
           <Route path={ROUTES.PACKAGES} element={<PackagesPage />} />
+          <Route path={ROUTES.VOICE} element={<VoicePage />} />
+          <Route path={ROUTES.WAHA_SESSIONS} element={<WahaSessionsPage />} />
+          <Route path={ROUTES.WHATSAPP_CLOUD} element={<WhatsAppCloudPage />} />
         </Route>
 
         {/* Catch-all → overview */}

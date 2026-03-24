@@ -1,0 +1,17 @@
+{
+  "title": "Voice Assistant",
+  "statusReady": "Ready",
+  "statusListening": "Listening...",
+  "statusThinking": "Thinking...",
+  "statusSpeaking": "Speaking...",
+  "selectAgent": "Select agent",
+  "noAgents": "No agents available",
+  "tapToSpeak": "Tap to speak",
+  "tapToStop": "Tap to stop",
+  "tapToCancel": "Tap to cancel",
+  "spaceHint": "Press Space",
+  "conversation": "Conversation",
+  "micPermissionDenied": "Microphone permission denied",
+  "speechNotRecognized": "Could not recognize speech",
+  "connectionRequired": "Connection required"
+}

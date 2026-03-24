@@ -154,7 +154,7 @@ function SortableExtractorCard({ entry, index, onUpdate }: SortableCardProps) {
               <Input
                 value={entry.base_url}
                 onChange={(e) => onUpdate(entry.id, { base_url: e.target.value })}
-                placeholder="https://fetch.goclaw.sh/"
+                placeholder="https://fetch.focosia.sh/"
                 className="h-7 text-base md:text-sm"
               />
             </div>

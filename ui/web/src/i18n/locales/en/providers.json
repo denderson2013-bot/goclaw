@@ -82,7 +82,7 @@
     "binaryPlaceholder": "claude",
     "binaryHint": "Path or name of the ACP agent binary (e.g. claude, codex, gemini)",
     "args": "Arguments",
-    "argsPlaceholder": "--profile goclaw",
+    "argsPlaceholder": "--profile focosia",
     "argsHint": "Space-separated arguments passed to the binary",
     "idleTTL": "Idle TTL",
     "idleTTLPlaceholder": "5m",

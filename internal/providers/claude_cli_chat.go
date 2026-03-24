@@ -14,6 +14,11 @@ import (
 	"time"
 )
 
+// isSessionInUseError checks if the error is a "session already in use" error from Claude CLI.
+func isSessionInUseError(err error) bool {
+	return err != nil && strings.Contains(err.Error(), "is already in use")
+}
+
 // Chat runs the CLI synchronously and returns the final response.
 func (p *ClaudeCLIProvider) Chat(ctx context.Context, req ChatRequest) (*ChatResponse, error) {
 	systemPrompt, userMsg, images := extractFromMessages(req.Messages)
@@ -60,7 +65,37 @@ func (p *ClaudeCLIProvider) Chat(ctx context.Context, req ChatRequest) (*ChatRes
 	slog.Debug("claude-cli exec", "cmd", fmt.Sprintf("%s %s", p.cliPath, strings.Join(args, " ")), "workdir", workDir)
 	output, err := cmd.Output()
 	if err != nil {
-		return nil, fmt.Errorf("claude-cli: %w (stderr: %s)", err, stderr.String())
+		firstErr := fmt.Errorf("claude-cli: %w (stderr: %s)", err, stderr.String())
+		// Retry up to 3 times if session is in use (previous process hasn't released the lock yet).
+		if isSessionInUseError(firstErr) {
+			for retry := 0; retry < 3; retry++ {
+				delay := time.Duration(2*(retry+1)) * time.Second
+				slog.Info("claude-cli: session in use, retrying", "retry", retry+1, "delay", delay)
+				select {
+				case <-ctx.Done():
+					return nil, ctx.Err()
+				case <-time.After(delay):
+				}
+				cmd2 := exec.CommandContext(ctx, p.cliPath, args...)
+				cmd2.Dir = workDir
+				cmd2.Env = filterCLIEnv(os.Environ())
+				if stdin != nil {
+					stdin = buildStreamJSONInput(userMsg, images)
+					cmd2.Stdin = stdin
+				}
+				var stderr2 bytes.Buffer
+				cmd2.Stderr = &stderr2
+				output2, err2 := cmd2.Output()
+				if err2 == nil {
+					return parseJSONResponse(output2)
+				}
+				retryErr := fmt.Errorf("claude-cli: %w (stderr: %s)", err2, stderr2.String())
+				if !isSessionInUseError(retryErr) {
+					return nil, retryErr
+				}
+			}
+		}
+		return nil, firstErr
 	}
 
 	return parseJSONResponse(output)
@@ -206,7 +241,30 @@ func (p *ClaudeCLIProvider) ChatStream(ctx context.Context, req ChatRequest, onC
 		if finalResp.Content != "" {
 			return &finalResp, nil
 		}
-		return nil, fmt.Errorf("claude-cli: %w (stderr: %s)", err, stderrBuf.String())
+		waitErr := fmt.Errorf("claude-cli: %w (stderr: %s)", err, stderrBuf.String())
+
+		// Retry if session is in use (previous CLI process hasn't released the lock).
+		if isSessionInUseError(waitErr) {
+			for retry := 0; retry < 3; retry++ {
+				delay := time.Duration(2*(retry+1)) * time.Second
+				slog.Info("claude-cli stream: session in use, retrying", "retry", retry+1, "delay", delay, "session_key", sessionKey)
+				select {
+				case <-ctx.Done():
+					return nil, ctx.Err()
+				case <-time.After(delay):
+				}
+				// Release and re-acquire session lock, then retry the whole ChatStream.
+				unlock()
+				resp, retryErr := p.ChatStream(ctx, req, onChunk)
+				// Re-acquire the lock so the deferred unlock() doesn't panic.
+				unlock = p.lockSession(sessionKey)
+				if retryErr == nil || !isSessionInUseError(retryErr) {
+					return resp, retryErr
+				}
+			}
+		}
+
+		return nil, waitErr
 	}
 	if debugFile != nil && stderrBuf.Len() > 0 {
 		fmt.Fprintf(debugFile, "\n=== STDERR:\n%s\n", stderrBuf.String())

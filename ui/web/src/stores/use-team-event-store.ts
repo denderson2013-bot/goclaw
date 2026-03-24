@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 const MAX_EVENTS = 500;
-const PERSIST_KEY = "goclaw:recentEvents";
+const PERSIST_KEY = "focosia:recentEvents";
 const PERSIST_MAX = 20;
 
 /** A single captured WS event entry */

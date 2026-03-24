@@ -38,23 +38,27 @@ export const ROUTES = {
   API_KEYS: "/api-keys",
   PACKAGES: "/packages",
   SETUP: "/setup",
+  VOICE: "/voice",
+  WAHA_SESSIONS: "/waha-sessions",
+  WHATSAPP_CLOUD: "/whatsapp-cloud",
 } as const;
 
 export const LOCAL_STORAGE_KEYS = {
-  TOKEN: "goclaw:token",
-  USER_ID: "goclaw:userId",
-  SENDER_ID: "goclaw:senderID",
-  THEME: "goclaw:theme",
-  SIDEBAR_COLLAPSED: "goclaw:sidebarCollapsed",
-  LANGUAGE: "goclaw:language",
-  TIMEZONE: "goclaw:timezone",
+  TOKEN: "focosia:token",
+  USER_ID: "focosia:userId",
+  SENDER_ID: "focosia:senderID",
+  THEME: "focosia:theme",
+  SIDEBAR_COLLAPSED: "focosia:sidebarCollapsed",
+  LANGUAGE: "focosia:language",
+  TIMEZONE: "focosia:timezone",
 } as const;
 
-export const SUPPORTED_LANGUAGES = ["en", "vi", "zh"] as const;
+export const SUPPORTED_LANGUAGES = ["en", "pt-BR", "vi", "zh"] as const;
 export type Language = (typeof SUPPORTED_LANGUAGES)[number];
 
 export const LANGUAGE_LABELS: Record<Language, string> = {
   en: "English",
+  "pt-BR": "Português (BR)",
   vi: "Tiếng Việt",
   zh: "中文",
 };

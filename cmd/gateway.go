@@ -19,7 +19,9 @@ import (
 	"github.com/nextlevelbuilder/goclaw/internal/channels/feishu"
 	slackchannel "github.com/nextlevelbuilder/goclaw/internal/channels/slack"
 	"github.com/nextlevelbuilder/goclaw/internal/channels/telegram"
+	wahachannel "github.com/nextlevelbuilder/goclaw/internal/channels/waha"
 	"github.com/nextlevelbuilder/goclaw/internal/channels/whatsapp"
+	whatsappcloud "github.com/nextlevelbuilder/goclaw/internal/channels/whatsapp_cloud"
 	"github.com/nextlevelbuilder/goclaw/internal/channels/zalo"
 	zalopersonal "github.com/nextlevelbuilder/goclaw/internal/channels/zalo/personal"
 	"github.com/nextlevelbuilder/goclaw/internal/config"
@@ -372,6 +374,20 @@ func runGateway() {
 	// Runtime package management (install/uninstall system/pip/npm packages)
 	server.SetPackagesHandler(httpapi.NewPackagesHandler(cfg.Gateway.Token))
 
+	// WAHA session management API (only when WAHA base URL is configured)
+	if cfg.Channels.Waha.BaseURL != "" {
+		wahaH := httpapi.NewWahaSessionsHandler(
+			cfg.Channels.Waha.BaseURL,
+			cfg.Channels.Waha.ApiKey,
+			cfg.Gateway.Token,
+			pgStores.ChannelInstances,
+			msgBus,
+			"", // encKey — not needed for plain JSON credentials
+		)
+		server.SetWahaSessionsHandler(wahaH)
+		slog.Info("waha sessions handler enabled", "base_url", cfg.Channels.Waha.BaseURL)
+	}
+
 	// API key management
 	// API documentation (OpenAPI spec + Swagger UI at /docs)
 	server.SetDocsHandler(httpapi.NewDocsHandler(cfg.Gateway.Token))
@@ -471,6 +487,8 @@ func runGateway() {
 		instanceLoader.RegisterFactory(channels.TypeZaloOA, zalo.Factory)
 		instanceLoader.RegisterFactory(channels.TypeZaloPersonal, zalopersonal.FactoryWithPendingStore(pgStores.PendingMessages))
 		instanceLoader.RegisterFactory(channels.TypeWhatsApp, whatsapp.Factory)
+		instanceLoader.RegisterFactory(channels.TypeWaha, wahachannel.Factory)
+		instanceLoader.RegisterFactory(channels.TypeWhatsAppCloud, whatsappcloud.Factory)
 		instanceLoader.RegisterFactory(channels.TypeSlack, slackchannel.FactoryWithPendingStore(pgStores.PendingMessages))
 		if err := instanceLoader.LoadAll(context.Background()); err != nil {
 			slog.Error("failed to load channel instances from DB", "error", err)
@@ -479,6 +497,18 @@ func runGateway() {
 
 	// Register config-based channels as fallback when no DB instances loaded.
 	registerConfigChannels(cfg, channelMgr, msgBus, pgStores, instanceLoader)
+
+	// WhatsApp Cloud API management handler (with Embedded Signup dependencies)
+	whatsappCloudH := httpapi.NewWhatsAppCloudHandler(channelMgr, cfg.Gateway.Token)
+	whatsappCloudH.SetConfig(cfg)
+	whatsappCloudH.SetMessageBus(msgBus)
+	if pgStores.ChannelInstances != nil {
+		whatsappCloudH.SetInstanceStore(pgStores.ChannelInstances)
+	}
+	if pgStores.Agents != nil {
+		whatsappCloudH.SetAgentStore(pgStores.Agents)
+	}
+	server.SetWhatsAppCloudHandler(whatsappCloudH)
 
 	// Register channels/instances/links/teams RPC methods
 	wireChannelRPCMethods(server, pgStores, channelMgr, agentRouter, msgBus, workspace)

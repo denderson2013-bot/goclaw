@@ -1,0 +1,107 @@
+{
+  "layout": {
+    "subtitle": "Vamos colocar seu gateway em funcionamento"
+  },
+  "steps": {
+    "provider": "Provedor",
+    "model": "Modelo",
+    "agent": "Agente",
+    "channel": "Canal",
+    "channelOptional": "(Opcional)"
+  },
+  "complete": {
+    "title": "Configuração Concluída!",
+    "ready": "Seu sistema está pronto!",
+    "description": "Provedor, agente e canal foram configurados. Você pode gerenciá-los a qualquer momento pelo painel.",
+    "goToDashboard": "Ir para o Painel"
+  },
+  "provider": {
+    "title": "Configurar Provedor de LLM",
+    "descriptionCli": "Conecte usando sua instalação local do Claude CLI. Nenhuma chave de API necessária.",
+    "descriptionOauth": "Entre com sua conta ChatGPT para usar sua assinatura via OAuth. Nenhuma chave de API necessária.",
+    "description": "Conecte a um provedor de IA para alimentar seus agentes. Você precisará de uma chave de API.",
+    "providerType": "Tipo de Provedor",
+    "providerTypeHint": "O serviço de LLM que você quer conectar. OpenRouter é recomendado para acesso a múltiplos modelos.",
+    "name": "Nome",
+    "nameHint": "Identificador interno para este provedor. Gerado automaticamente a partir do tipo de provedor.",
+    "apiKey": "Chave de API *",
+    "apiKeyHint": "A chave secreta do seu provedor. Criptografada no servidor e nunca exposta em respostas da API.",
+    "apiBase": "URL Base da API",
+    "apiBaseHint": "A URL do endpoint para requisições da API. Preenchida automaticamente com base no tipo de provedor. Substitua apenas se estiver usando um proxy personalizado.",
+    "creating": "Criando...",
+    "create": "Criar Provedor",
+    "errors": {
+      "apiKeyRequired": "A chave de API é obrigatória",
+      "oauthProviderNotFound": "Autenticação OAuth bem-sucedida, mas o provedor não foi encontrado. Tente novamente.",
+      "failedCreate": "Falha ao criar provedor"
+    }
+  },
+  "model": {
+    "title": "Selecionar e Verificar Modelo",
+    "description": "Escolha um modelo e verifique se a conexão com seu provedor funciona.",
+    "provider": "Provedor:",
+    "model": "Modelo *",
+    "modelHint": "O modelo de IA a ser usado. Selecione da lista ou digite um ID de modelo manualmente se não estiver listado.",
+    "loadingModels": "Carregando modelos...",
+    "selectModel": "Selecionar ou digitar um ID de modelo",
+    "noModelsHint": "Este provedor não lista modelos — digite o ID do modelo manualmente.",
+    "verified": "Verificado",
+    "verify": "Verificar",
+    "verifying": "Verificando...",
+    "continue": "Continuar",
+    "modelVerified": "Modelo verificado",
+    "modelVerifiedDesc": "{{model}} está funcionando corretamente",
+    "verificationFailed": "Verificação falhou. Verifique sua chave de API e modelo."
+  },
+  "agent": {
+    "title": "Crie Seu Primeiro Agente",
+    "description": "Um agente é seu assistente de IA. Personalize seu nome e personalidade.",
+    "provider": "Provedor:",
+    "model": "Modelo:",
+    "displayName": "Nome de Exibição",
+    "displayNameHint": "Será gerado automaticamente durante a invocação com base na personalidade do agente.",
+    "agentKey": "Chave do Agente",
+    "agentKeyHint": "Identificador único para o agente. Apenas letras minúsculas, números e hífens.",
+    "agentKeyPlaceholder": "meu-agente",
+    "personality": "Personalidade do Agente",
+    "personalityHint": "Descreva o papel e comportamento do seu agente. A IA gerará arquivos de contexto a partir disso durante a invocação.",
+    "personalityPlaceholder": "Descreva a personalidade, propósito e comportamento do seu agente...",
+    "personalityHintBottom": "Personalize este prompt para moldar a personalidade e especialidade do seu agente.",
+    "selfEvolve": "Autoevolução",
+    "selfEvolveDesc": "Permitir que o agente evolua seu estilo de comunicação ao longo do tempo via SOUL.md",
+    "creating": "Criando...",
+    "create": "Criar Agente",
+    "summoningFailed": "Invocação falhou. Ajuste suas configurações e tente novamente.",
+    "errors": {
+      "noProvider": "Nenhum provedor disponível",
+      "failedCreate": "Falha ao criar agente"
+    }
+  },
+  "channel": {
+    "title": "Conectar um Canal",
+    "description": "Conecte uma plataforma de mensagens ao seu agente. Você pode adicionar canais depois.",
+    "skip": "Pular",
+    "skipFinish": "Pular e Finalizar",
+    "agent": "Agente:",
+    "channelType": "Tipo de Canal",
+    "channelTypeHint": "A plataforma de mensagens para conectar. Ex: Telegram, Discord, Zalo.",
+    "name": "Nome",
+    "nameHint": "Identificador interno para esta instância de canal. Gerado automaticamente a partir do tipo de canal.",
+    "namePlaceholder": "meu-telegram",
+    "displayName": "Nome de Exibição",
+    "displayNameHint": "Um nome amigável exibido na interface. Opcional.",
+    "displayNamePlaceholder": "Bot de Vendas",
+    "credentials": "Credenciais",
+    "credentialsHint": "Criptografadas no servidor. Nunca retornadas em respostas da API.",
+    "creating": "Criando...",
+    "create": "Criar Canal",
+    "errors": {
+      "noAgent": "Nenhum agente disponível",
+      "requiredFields": "Obrigatório: {{fields}}",
+      "failedCreate": "Falha ao criar canal"
+    }
+  },
+  "common": {
+    "back": "Voltar"
+  }
+}

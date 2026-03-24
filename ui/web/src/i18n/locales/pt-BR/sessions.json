@@ -1,0 +1,45 @@
+{
+  "title": "Sessões",
+  "description": "Navegue pelas sessões de conversa",
+  "searchPlaceholder": "Buscar sessões...",
+  "emptyTitle": "Nenhuma sessão ainda",
+  "emptyDescription": "As sessões aparecerão aqui quando você começar a conversar.",
+  "noMatchTitle": "Nenhuma sessão encontrada",
+  "noMatchDescription": "Tente um termo de busca diferente.",
+  "columns": {
+    "session": "Sessão",
+    "agent": "Agente",
+    "context": "Contexto",
+    "messages": "Mensagens",
+    "updated": "Atualizada"
+  },
+  "contextBar": {
+    "compacted": "Compactado {{count}} vez(es)"
+  },
+  "detail": {
+    "reset": "Redefinir",
+    "delete": "Excluir",
+    "deleteTitle": "Excluir Sessão",
+    "deleteDescription": "Isso excluirá permanentemente todas as mensagens desta sessão.",
+    "resetTitle": "Redefinir Sessão",
+    "resetDescription": "Isso limpará todas as mensagens, mas manterá a sessão.",
+    "confirmDelete": "Excluir",
+    "confirmReset": "Redefinir",
+    "noMessages": "Nenhuma mensagem nesta sessão",
+    "summary": "Resumo",
+    "showMore": "Mostrar mais",
+    "showLess": "Mostrar menos",
+    "showDetails": "mostrar detalhes",
+    "hide": "ocultar",
+    "systemMessage": "Mensagem do Sistema",
+    "messages": "mensagens"
+  },
+  "toast": {
+    "deleted": "Sessão excluída",
+    "deleteFailed": "Falha ao excluir sessão",
+    "reset": "Sessão redefinida",
+    "resetFailed": "Falha ao redefinir sessão",
+    "updated": "Sessão atualizada",
+    "updateFailed": "Falha ao atualizar sessão"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "title": "WhatsApp Cloud API",
+  "description": "Quan ly so dien thoai va mau tin nhan WhatsApp Business API chinh thuc (Meta).",
+  "tabs": {
+    "numbers": "So dien thoai",
+    "templates": "Mau tin nhan"
+  },
+  "signup": {
+    "success": "So WhatsApp da ket noi thanh cong! Kenh moi dang hoat dong.",
+    "error": "Dang ky nhung khong thanh cong"
+  },
+  "instances": {
+    "title": "So da ket noi",
+    "refresh": "Lam moi",
+    "connect": "Ket noi so",
+    "empty": "Chua co so WhatsApp Cloud nao.",
+    "emptyHint": "Nhan 'Ket noi so' de bat dau dang ky Meta va them so WhatsApp.",
+    "active": "Hoat dong",
+    "inactive": "Khong hoat dong",
+    "disable": "Vo hieu hoa",
+    "enable": "Kich hoat",
+    "delete": "Xoa",
+    "confirmDelete": "Ban co chac chan muon xoa kenh WhatsApp Cloud nay?"
+  },
+  "numbers": {
+    "title": "So dien thoai da ket noi",
+    "refresh": "Lam moi",
+    "phone": "So dien thoai",
+    "displayName": "Ten hien thi",
+    "quality": "Chat luong",
+    "status": "Trang thai",
+    "empty": "Khong tim thay so dien thoai nao.",
+    "emptyHint": "Ket noi kenh WhatsApp Cloud truoc."
+  },
+  "templates": {
+    "title": "Mau tin nhan",
+    "refresh": "Lam moi",
+    "name": "Ten",
+    "language": "Ngon ngu",
+    "category": "Danh muc",
+    "status": "Trang thai",
+    "empty": "Khong tim thay mau tin nhan nao.",
+    "emptyHint": "Tao mau trong Meta Business Manager hoac qua API."
+  }
+}

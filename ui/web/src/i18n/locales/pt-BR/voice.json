@@ -1,0 +1,17 @@
+{
+  "title": "Assistente de Voz",
+  "statusReady": "Pronto",
+  "statusListening": "Ouvindo...",
+  "statusThinking": "Pensando...",
+  "statusSpeaking": "Falando...",
+  "selectAgent": "Selecionar agente",
+  "noAgents": "Nenhum agente disponivel",
+  "tapToSpeak": "Toque para falar",
+  "tapToStop": "Toque para parar",
+  "tapToCancel": "Toque para cancelar",
+  "spaceHint": "Pressione Espaco",
+  "conversation": "Conversa",
+  "micPermissionDenied": "Permissao do microfone negada",
+  "speechNotRecognized": "Nao foi possivel reconhecer a fala",
+  "connectionRequired": "Conexao necessaria"
+}

@@ -1,0 +1,80 @@
+{
+  "title": "Painel",
+  "description": "Visão geral do gateway e uso de cotas",
+  "tabs": {
+    "overview": "Visão Geral",
+    "usage": "Uso"
+  },
+  "statCards": {
+    "requestsToday": "Requisições Hoje",
+    "tokensToday": "Tokens Hoje",
+    "costToday": "Custo Hoje",
+    "agents": "Agentes",
+    "channels": "Canais",
+    "running": "em execução",
+    "online": "online",
+    "users": "{{count}} usuários",
+    "inOut": "{{input}} entrada / {{output}} saída"
+  },
+  "providers": {
+    "noProvidersTitle": "Nenhum provedor LLM configurado",
+    "noEnabledTitle": "Nenhum provedor LLM ativado",
+    "noProvidersDesc": "Você precisa adicionar pelo menos um provedor LLM antes que os agentes possam funcionar. ",
+    "noEnabledDesc": "Todos os provedores estão desativados no momento. Ative pelo menos um para começar a usar os agentes. ",
+    "goToSettings": "Ir para Configurações de Provedores"
+  },
+  "systemHealth": {
+    "title": "Saúde do Sistema",
+    "uptime": "Tempo Ativo",
+    "database": "Banco de Dados",
+    "providers": "Provedores",
+    "tools": "Ferramentas",
+    "sessions": "Sessões",
+    "clients": "Clientes",
+    "channels": "Canais",
+    "active": "{{count}} ativos",
+    "none": "nenhum",
+    "runtimes": "Runtimes"
+  },
+  "connectedClients": {
+    "title": "Clientes Conectados",
+    "noClients": "Nenhum cliente conectado",
+    "columns": {
+      "ip": "IP",
+      "user": "Usuário",
+      "role": "Função",
+      "connected": "Conectado"
+    },
+    "you": "você"
+  },
+  "cronJobs": {
+    "title": "Jobs Cron",
+    "manage": "Gerenciar",
+    "noJobs": "Nenhum job cron configurado",
+    "disabled": "desativado"
+  },
+  "recentRequests": {
+    "title": "Requisições Recentes",
+    "viewAll": "Ver Todas",
+    "noRequests": "Nenhuma requisição recente",
+    "columns": {
+      "time": "Hora",
+      "name": "Nome",
+      "user": "Usuário",
+      "channel": "Canal",
+      "tokens": "Tokens",
+      "duration": "Duração",
+      "status": "Status"
+    }
+  },
+  "quotaUsage": {
+    "title": "Uso de Cotas",
+    "columns": {
+      "userGroup": "Usuário / Grupo",
+      "hour": "Hora",
+      "day": "Dia",
+      "week": "Semana"
+    },
+    "noLimit": "sem limite"
+  }
+}

@@ -64,6 +64,18 @@ export const credentialsSchema: Record<string, FieldDef[]> = {
   whatsapp: [
     { key: "bridge_url", label: "Bridge URL", type: "text", required: true, placeholder: "http://bridge:3000" },
   ],
+  waha: [
+    { key: "session", label: "Sessão WAHA", type: "text", required: true, placeholder: "nome-da-sessao", help: "Nome da sessão conectada na WAHA (credenciais vêm do servidor)" },
+  ],
+  whatsapp_cloud: [
+    // Credentials are provisioned automatically via Embedded Signup.
+    // For manual setup, provide access_token + phone_number_id.
+    { key: "access_token", label: "Access Token", type: "password", required: false, placeholder: "EAAG...", help: "Use 'Conectar Numero' on the WhatsApp Cloud page for automatic setup, or paste a token here for manual config" },
+    { key: "phone_number_id", label: "Phone Number ID", type: "text", required: false, placeholder: "123456789", help: "From Meta Business Manager > WhatsApp > Phone Numbers" },
+    { key: "waba_id", label: "WABA ID", type: "text", placeholder: "789012345", help: "WhatsApp Business Account ID" },
+    { key: "app_secret", label: "App Secret", type: "password", placeholder: "abc123...", help: "Meta App Secret for webhook signature validation" },
+    { key: "verify_token", label: "Verify Token", type: "text", placeholder: "my-verify-token", help: "Custom token for webhook verification handshake" },
+  ],
 };
 
 // --- Config schemas ---
@@ -144,6 +156,18 @@ export const configSchema: Record<string, FieldDef[]> = {
     { key: "dm_policy", label: "DM Policy", type: "select", options: dmPolicyOptions, defaultValue: "pairing" },
     { key: "group_policy", label: "Group Policy", type: "select", options: groupPolicyOptions, defaultValue: "pairing" },
     { key: "allow_from", label: "Allowed Users", type: "tags", help: "WhatsApp user IDs" },
+    { key: "block_reply", label: "Block Reply", type: "select", options: blockReplyOptions, defaultValue: "inherit", help: "Deliver intermediate text during tool iterations" },
+  ],
+  waha: [
+    { key: "dm_policy", label: "Política DM", type: "select", options: dmPolicyOptions, defaultValue: "open", help: "Como tratar mensagens diretas" },
+    { key: "group_policy", label: "Política de Grupos", type: "select", options: groupPolicyOptions, defaultValue: "open", help: "Como tratar mensagens de grupos" },
+    { key: "allow_from", label: "Usuários Permitidos", type: "tags", help: "Números WhatsApp (ex: 5511999999999)" },
+    { key: "webhook_path", label: "Webhook Path", type: "text", defaultValue: "/webhook/waha", help: "Caminho do webhook (configurar na WAHA)" },
+    { key: "block_reply", label: "Block Reply", type: "select", options: blockReplyOptions, defaultValue: "inherit", help: "Enviar texto intermediário durante iterações de ferramentas" },
+  ],
+  whatsapp_cloud: [
+    { key: "dm_policy", label: "DM Policy", type: "select", options: [{ value: "open", label: "Open (accept all)" }, { value: "allowlist", label: "Allowlist only" }, { value: "disabled", label: "Disabled" }], defaultValue: "open", help: "How to handle direct messages" },
+    { key: "allow_from", label: "Allowed Numbers", type: "tags", help: "WhatsApp phone numbers (e.g. 5511999999999)" },
     { key: "block_reply", label: "Block Reply", type: "select", options: blockReplyOptions, defaultValue: "inherit", help: "Deliver intermediate text during tool iterations" },
   ],
 };

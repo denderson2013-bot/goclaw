@@ -82,7 +82,7 @@
     "binaryPlaceholder": "claude",
     "binaryHint": "Đường dẫn hoặc tên tệp nhị phân agent ACP (vd: claude, codex, gemini)",
     "args": "Tham số",
-    "argsPlaceholder": "--profile goclaw",
+    "argsPlaceholder": "--profile focosia",
     "argsHint": "Các tham số cách nhau bởi dấu cách truyền vào tệp nhị phân",
     "idleTTL": "Thời gian chờ",
     "idleTTLPlaceholder": "5m",

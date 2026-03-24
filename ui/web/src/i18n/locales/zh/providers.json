@@ -82,7 +82,7 @@
     "binaryPlaceholder": "claude",
     "binaryHint": "ACP 代理二进制文件的路径或名称（例如 claude、codex、gemini）",
     "args": "参数",
-    "argsPlaceholder": "--profile goclaw",
+    "argsPlaceholder": "--profile focosia",
     "argsHint": "传递给二进制文件的以空格分隔的参数",
     "idleTTL": "空闲超时",
     "idleTTLPlaceholder": "5m",

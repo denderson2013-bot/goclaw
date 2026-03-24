@@ -1,0 +1,17 @@
+{
+  "expandSidebar": "Expandir barra lateral",
+  "collapseSidebar": "Recolher barra lateral",
+  "openMenu": "Abrir menu",
+  "toggleTheme": "Alternar tema",
+  "logout": "Sair",
+  "language": "Idioma",
+  "timezone": "Fuso horário",
+  "pairingRequests": "Solicitações de pareamento",
+  "pendingPairingRequest": "{{count}} solicitação de pareamento pendente",
+  "pendingPairingRequests": "{{count}} solicitações de pareamento pendentes",
+  "languages": {
+    "en": "English",
+    "vi": "Tiếng Việt",
+    "zh": "中文"
+  }
+}

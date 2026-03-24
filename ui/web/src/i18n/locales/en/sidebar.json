@@ -38,6 +38,9 @@
     "cliCredentials": "CLI Credentials",
     "apiKeys": "API Keys",
     "apiDocs": "API Docs",
-    "packages": "Packages"
+    "packages": "Packages",
+    "voice": "Voice Assistant",
+    "wahaSessions": "WAHA Sessions",
+    "whatsappCloud": "WhatsApp Cloud"
   }
 }

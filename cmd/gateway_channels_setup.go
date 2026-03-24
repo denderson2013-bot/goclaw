@@ -15,6 +15,7 @@ import (
 	"github.com/nextlevelbuilder/goclaw/internal/channels/feishu"
 	slackchannel "github.com/nextlevelbuilder/goclaw/internal/channels/slack"
 	"github.com/nextlevelbuilder/goclaw/internal/channels/telegram"
+	wahachannel "github.com/nextlevelbuilder/goclaw/internal/channels/waha"
 	"github.com/nextlevelbuilder/goclaw/internal/channels/whatsapp"
 	"github.com/nextlevelbuilder/goclaw/internal/channels/zalo"
 	zalopersonal "github.com/nextlevelbuilder/goclaw/internal/channels/zalo/personal"
@@ -95,6 +96,27 @@ func registerConfigChannels(cfg *config.Config, channelMgr *channels.Manager, ms
 		} else {
 			channelMgr.RegisterChannel(channels.TypeFeishu, f)
 			slog.Info("feishu/lark channel enabled (config)")
+		}
+	}
+
+	if cfg.Channels.Waha.Enabled && cfg.Channels.Waha.BaseURL != "" && instanceLoader == nil {
+		wa, err := wahachannel.New(
+			cfg.Channels.Waha.BaseURL,
+			cfg.Channels.Waha.ApiKey,
+			cfg.Channels.Waha.Session,
+			cfg.Channels.Waha.AllowFrom,
+			cfg.Channels.Waha.DMPolicy,
+			cfg.Channels.Waha.GroupPolicy,
+			cfg.Channels.Waha.BlockReply,
+			cfg.Channels.Waha.WebhookPath,
+			msgBus,
+			pgStores.Pairing,
+		)
+		if err != nil {
+			slog.Error("failed to initialize waha channel", "error", err)
+		} else {
+			channelMgr.RegisterChannel(channels.TypeWaha, wa)
+			slog.Info("waha channel enabled (config)")
 		}
 	}
 }

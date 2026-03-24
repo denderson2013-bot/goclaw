@@ -1,6 +1,13 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
+// Suppress i18next marketing/sponsorship console log
+const _origLog = console.log;
+console.log = (...args: unknown[]) => {
+  if (typeof args[0] === "string" && args[0].includes("locize")) return;
+  _origLog(...args);
+};
+
 // --- EN namespaces ---
 import enCommon from "./locales/en/common.json";
 import enSidebar from "./locales/en/sidebar.json";
@@ -34,6 +41,9 @@ import enActivity from "./locales/en/activity.json";
 import enApiKeys from "./locales/en/api-keys.json";
 import enCliCredentials from "./locales/en/cli-credentials.json";
 import enPackages from "./locales/en/packages.json";
+import enVoice from "./locales/en/voice.json";
+import enWahaSessions from "./locales/en/waha-sessions.json";
+import enWhatsappCloud from "./locales/en/whatsapp-cloud.json";
 
 // --- VI namespaces ---
 import viCommon from "./locales/vi/common.json";
@@ -68,6 +78,9 @@ import viActivity from "./locales/vi/activity.json";
 import viApiKeys from "./locales/vi/api-keys.json";
 import viCliCredentials from "./locales/vi/cli-credentials.json";
 import viPackages from "./locales/vi/packages.json";
+import viVoice from "./locales/vi/voice.json";
+import viWahaSessions from "./locales/vi/waha-sessions.json";
+import viWhatsappCloud from "./locales/vi/whatsapp-cloud.json";
 
 // --- ZH namespaces ---
 import zhCommon from "./locales/zh/common.json";
@@ -102,13 +115,54 @@ import zhActivity from "./locales/zh/activity.json";
 import zhApiKeys from "./locales/zh/api-keys.json";
 import zhCliCredentials from "./locales/zh/cli-credentials.json";
 import zhPackages from "./locales/zh/packages.json";
+import zhVoice from "./locales/zh/voice.json";
+import zhWahaSessions from "./locales/zh/waha-sessions.json";
+import zhWhatsappCloud from "./locales/zh/whatsapp-cloud.json";
 
-const STORAGE_KEY = "goclaw:language";
+// --- PT-BR namespaces ---
+import ptBrCommon from "./locales/pt-BR/common.json";
+import ptBrSidebar from "./locales/pt-BR/sidebar.json";
+import ptBrTopbar from "./locales/pt-BR/topbar.json";
+import ptBrLogin from "./locales/pt-BR/login.json";
+import ptBrOverview from "./locales/pt-BR/overview.json";
+import ptBrChat from "./locales/pt-BR/chat.json";
+import ptBrAgents from "./locales/pt-BR/agents.json";
+import ptBrTeams from "./locales/pt-BR/teams.json";
+import ptBrSessions from "./locales/pt-BR/sessions.json";
+import ptBrSkills from "./locales/pt-BR/skills.json";
+import ptBrCron from "./locales/pt-BR/cron.json";
+import ptBrConfig from "./locales/pt-BR/config.json";
+import ptBrChannels from "./locales/pt-BR/channels.json";
+import ptBrProviders from "./locales/pt-BR/providers.json";
+import ptBrTraces from "./locales/pt-BR/traces.json";
+import ptBrEvents from "./locales/pt-BR/events.json";
+import ptBrUsage from "./locales/pt-BR/usage.json";
+import ptBrApprovals from "./locales/pt-BR/approvals.json";
+import ptBrNodes from "./locales/pt-BR/nodes.json";
+import ptBrLogs from "./locales/pt-BR/logs.json";
+import ptBrTools from "./locales/pt-BR/tools.json";
+import ptBrMcp from "./locales/pt-BR/mcp.json";
+import ptBrTts from "./locales/pt-BR/tts.json";
+import ptBrSetup from "./locales/pt-BR/setup.json";
+import ptBrMemory from "./locales/pt-BR/memory.json";
+import ptBrStorage from "./locales/pt-BR/storage.json";
+import ptBrPendingMessages from "./locales/pt-BR/pending-messages.json";
+import ptBrContacts from "./locales/pt-BR/contacts.json";
+import ptBrActivity from "./locales/pt-BR/activity.json";
+import ptBrApiKeys from "./locales/pt-BR/api-keys.json";
+import ptBrCliCredentials from "./locales/pt-BR/cli-credentials.json";
+import ptBrPackages from "./locales/pt-BR/packages.json";
+import ptBrVoice from "./locales/pt-BR/voice.json";
+import ptBrWahaSessions from "./locales/pt-BR/waha-sessions.json";
+import ptBrWhatsappCloud from "./locales/pt-BR/whatsapp-cloud.json";
+
+const STORAGE_KEY = "focosia:language";
 
 function getInitialLanguage(): string {
   const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored === "en" || stored === "vi" || stored === "zh") return stored;
+  if (stored === "en" || stored === "vi" || stored === "zh" || stored === "pt-BR") return stored;
   const lang = navigator.language.toLowerCase();
+  if (lang.startsWith("pt")) return "pt-BR";
   if (lang.startsWith("vi")) return "vi";
   if (lang.startsWith("zh")) return "zh";
   return "en";
@@ -120,7 +174,7 @@ const ns = [
   "channels", "providers", "traces", "events",
   "usage", "approvals", "nodes", "logs", "tools", "mcp", "tts",
   "setup", "memory", "storage", "pending-messages", "contacts", "activity", "api-keys",
-  "cli-credentials", "packages",
+  "cli-credentials", "packages", "voice", "waha-sessions", "whatsapp-cloud",
 ] as const;
 
 i18n.use(initReactI18next).init({
@@ -137,6 +191,9 @@ i18n.use(initReactI18next).init({
       contacts: enContacts, activity: enActivity, "api-keys": enApiKeys,
       "cli-credentials": enCliCredentials,
       packages: enPackages,
+      voice: enVoice,
+      "waha-sessions": enWahaSessions,
+      "whatsapp-cloud": enWhatsappCloud,
     },
     vi: {
       common: viCommon, sidebar: viSidebar, topbar: viTopbar, login: viLogin,
@@ -150,6 +207,9 @@ i18n.use(initReactI18next).init({
       contacts: viContacts, activity: viActivity, "api-keys": viApiKeys,
       "cli-credentials": viCliCredentials,
       packages: viPackages,
+      voice: viVoice,
+      "waha-sessions": viWahaSessions,
+      "whatsapp-cloud": viWhatsappCloud,
     },
     zh: {
       common: zhCommon, sidebar: zhSidebar, topbar: zhTopbar, login: zhLogin,
@@ -163,6 +223,25 @@ i18n.use(initReactI18next).init({
       contacts: zhContacts, activity: zhActivity, "api-keys": zhApiKeys,
       "cli-credentials": zhCliCredentials,
       packages: zhPackages,
+      voice: zhVoice,
+      "waha-sessions": zhWahaSessions,
+      "whatsapp-cloud": zhWhatsappCloud,
+    },
+    "pt-BR": {
+      common: ptBrCommon, sidebar: ptBrSidebar, topbar: ptBrTopbar, login: ptBrLogin,
+      overview: ptBrOverview, chat: ptBrChat, agents: ptBrAgents, teams: ptBrTeams,
+      sessions: ptBrSessions, skills: ptBrSkills, cron: ptBrCron, config: ptBrConfig,
+      channels: ptBrChannels, providers: ptBrProviders, traces: ptBrTraces,
+      events: ptBrEvents, usage: ptBrUsage,
+      approvals: ptBrApprovals, nodes: ptBrNodes, logs: ptBrLogs, tools: ptBrTools,
+      mcp: ptBrMcp, tts: ptBrTts, setup: ptBrSetup, memory: ptBrMemory, storage: ptBrStorage,
+      "pending-messages": ptBrPendingMessages,
+      contacts: ptBrContacts, activity: ptBrActivity, "api-keys": ptBrApiKeys,
+      "cli-credentials": ptBrCliCredentials,
+      packages: ptBrPackages,
+      voice: ptBrVoice,
+      "waha-sessions": ptBrWahaSessions,
+      "whatsapp-cloud": ptBrWhatsappCloud,
     },
   },
   ns: [...ns],

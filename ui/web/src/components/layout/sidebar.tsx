@@ -26,6 +26,9 @@ import {
   Contact,
   KeyRound,
   FileText,
+  Mic,
+  Smartphone,
+  MessageCircle,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { SidebarGroup } from "./sidebar-group";
@@ -61,7 +64,7 @@ export function Sidebar({ collapsed, onNavItemClick }: SidebarProps) {
       <div className="flex h-14 items-center border-b px-4">
         {!collapsed && (
           <span className="text-base font-semibold tracking-tight">
-            GoClaw
+            FocosIA
           </span>
         )}
         {collapsed && (
@@ -74,6 +77,7 @@ export function Sidebar({ collapsed, onNavItemClick }: SidebarProps) {
         <SidebarGroup label={t("groups.core")} collapsed={collapsed}>
           <SidebarItem to={ROUTES.OVERVIEW} icon={LayoutDashboard} label={t("nav.overview")} collapsed={collapsed} />
           <SidebarItem to={ROUTES.CHAT} icon={MessageSquare} label={t("nav.chat")} collapsed={collapsed} />
+          <SidebarItem to={ROUTES.VOICE} icon={Mic} label={t("nav.voice")} collapsed={collapsed} />
           <SidebarItem to={ROUTES.AGENTS} icon={Bot} label={t("nav.agents")} collapsed={collapsed} />
           <SidebarItem to={ROUTES.TEAMS} icon={Users} label={t("nav.agentTeams")} collapsed={collapsed} />
         </SidebarGroup>
@@ -87,6 +91,8 @@ export function Sidebar({ collapsed, onNavItemClick }: SidebarProps) {
         <SidebarGroup label={t("groups.connectivity")} collapsed={collapsed}>
           <SidebarItem to={ROUTES.CHANNELS} icon={Radio} label={t("nav.channels")} collapsed={collapsed} />
           <SidebarItem to={ROUTES.NODES} icon={Link} label={t("nav.nodes")} collapsed={collapsed} badge={pendingCount} />
+          <SidebarItem to={ROUTES.WAHA_SESSIONS} icon={Smartphone} label={t("nav.wahaSessions")} collapsed={collapsed} />
+          <SidebarItem to={ROUTES.WHATSAPP_CLOUD} icon={MessageCircle} label={t("nav.whatsappCloud")} collapsed={collapsed} />
         </SidebarGroup>
 
         <SidebarGroup label={t("groups.capabilities")} collapsed={collapsed}>
