@@ -51,12 +51,31 @@ func (h *WahaSessionsHandler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("DELETE /v1/waha/sessions/{name}", h.auth(h.handleDeleteSession))
 	mux.HandleFunc("POST /v1/waha/sessions/{name}/start", h.auth(h.handleStartSession))
 	mux.HandleFunc("POST /v1/waha/sessions/{name}/stop", h.auth(h.handleStopSession))
-	mux.HandleFunc("GET /v1/waha/sessions/{name}/qr", h.auth(h.handleGetQR))
+	mux.HandleFunc("GET /v1/waha/sessions/{name}/qr", h.authOrQuery(h.handleGetQR))
 	mux.HandleFunc("POST /v1/waha/sessions/{name}/link", h.auth(h.handleLinkSession))
 }
 
 func (h *WahaSessionsHandler) auth(next http.HandlerFunc) http.HandlerFunc {
 	return requireAuth(h.token, "", next)
+}
+
+// authOrQuery allows auth via Bearer header OR ?token= query param (for <img> tags).
+func (h *WahaSessionsHandler) authOrQuery(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Try header first
+		authHeader := r.Header.Get("Authorization")
+		if authHeader != "" {
+			requireAuth(h.token, "", next)(w, r)
+			return
+		}
+		// Fallback to query param
+		qToken := r.URL.Query().Get("token")
+		if qToken != "" && qToken == h.token {
+			next(w, r)
+			return
+		}
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+	}
 }
 
 // proxyGET sends a GET request to WAHA and writes the response back.
