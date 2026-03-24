@@ -97,7 +97,7 @@ export function WahaSessionsPage() {
     for (const s of sessions) {
       if (
         s.status === "WORKING" &&
-        !linkedSessions.has(s.name) &&
+        !getLinkedAgent(s.name) &&
         sessionAgentMap.current[s.name] &&
         linkingSession !== s.name
       ) {
@@ -295,11 +295,7 @@ export function WahaSessionsPage() {
                   {t("autoLinking")}
                 </p>
               )}
-              {linkedSessions.has(session.name) && (
-                <Badge variant="success" className="self-start">
-                  {t("linked")}
-                </Badge>
-              )}
+              {/* Removido: indicador duplicado — a tag do agente no topo já mostra */}
 
               {/* Actions */}
               <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t mt-2">
@@ -339,8 +335,8 @@ export function WahaSessionsPage() {
                   </Button>
                 )}
 
-                {/* Vincular - quando conectado e não vinculado */}
-                {session.status === "WORKING" && !linkedSessions.has(session.name) && agents.length > 0 && (
+                {/* Vincular - quando conectado e SEM canal criado */}
+                {session.status === "WORKING" && !getLinkedAgent(session.name) && agents.length > 0 && (
                   <Button
                     variant="outline"
                     size="sm"
