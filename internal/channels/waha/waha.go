@@ -225,19 +225,27 @@ func (c *Channel) handleWebhook(w http.ResponseWriter, r *http.Request) {
 
 	var envelope WebhookEnvelope
 	if err := json.Unmarshal(body, &envelope); err != nil {
-		slog.Warn("waha: invalid webhook JSON", "error", err)
+		slog.Warn("waha: invalid webhook JSON", "error", err, "body_preview", string(body[:min(len(body), 200)]))
 		http.Error(w, "bad request", http.StatusBadRequest)
 		return
 	}
 
-	// Only process message events.
-	if envelope.Event != "message" {
+	slog.Info("waha: webhook received",
+		"event", envelope.Event,
+		"from", envelope.Payload.From,
+		"fromMe", envelope.Payload.FromMe,
+		"body_preview", channels.Truncate(envelope.Payload.Body, 50),
+	)
+
+	// Process both "message" and "message.any" — but only non-fromMe.
+	if envelope.Event != "message" && envelope.Event != "message.any" {
 		w.WriteHeader(http.StatusOK)
 		return
 	}
 
 	// Skip own messages (fromMe).
 	if envelope.Payload.FromMe {
+		slog.Debug("waha: skipping fromMe message", "from", envelope.Payload.From)
 		w.WriteHeader(http.StatusOK)
 		return
 	}
