@@ -1,6 +1,13 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
+// Suppress i18next marketing/sponsorship console log
+const _origLog = console.log;
+console.log = (...args: unknown[]) => {
+  if (typeof args[0] === "string" && args[0].includes("locize")) return;
+  _origLog(...args);
+};
+
 // --- EN namespaces ---
 import enCommon from "./locales/en/common.json";
 import enSidebar from "./locales/en/sidebar.json";
