@@ -175,7 +175,12 @@ func (c *Channel) handleVerification(w http.ResponseWriter, r *http.Request) {
 	token := r.URL.Query().Get("hub.verify_token")
 	challenge := r.URL.Query().Get("hub.challenge")
 
-	if mode == "subscribe" && token == c.verifyToken {
+	// Check against channel verify_token, or fallback to env var
+	expectedToken := c.verifyToken
+	if expectedToken == "" {
+		expectedToken = os.Getenv("GOCLAW_META_VERIFY_TOKEN")
+	}
+	if mode == "subscribe" && token != "" && token == expectedToken {
 		slog.Info("whatsapp_cloud: webhook verification successful")
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(challenge))
